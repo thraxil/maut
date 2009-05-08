@@ -157,7 +157,7 @@ def get_or_create_album(name,artist):
         # with this artist 
         for album in r:
             for track in album.track_set.all():
-                if track.artist == artist:
+                if track.artist.id == artist.id:
                     # good enough
                     return album
             else:
