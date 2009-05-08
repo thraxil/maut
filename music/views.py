@@ -72,5 +72,15 @@ def rate_current(request,rating):
 
 def updatedb(request):
     """ scan the music directory looking for new files """
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
     scan_for_new_files()
+    return HttpResponse(status=200,content="")
+
+def queueunrated(request):
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
+    unrated = unrated_tracks()
+    for track in unrated:
+        add_track_to_playlist(track)
     return HttpResponse(status=200,content="")

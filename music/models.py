@@ -12,6 +12,16 @@ from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
 from mutagen.flac import FLAC
 
+def add_track_to_playlist(track):
+    url = track.url
+    url = url.replace("./home/anders/MyMusic/","")
+    command = ["/usr/bin/mpc","add",url]
+
+    print " ".join(command)
+    p = Popen(command,stdout=PIPE,stderr=PIPE)
+    (out,err) = p.communicate()
+
+
 def last_played_track():
     s = Statistic.objects.all().order_by("-accessdate")[0]
     return Track.objects.get(url=s.url)
@@ -101,6 +111,9 @@ def scan_for_new_files():
                         filetype=int(filetype),
                         sampler=sampler,
                         bpm=bpm)
+                    # make sure corresponding statistics object is
+                    # created
+                    s = t.statistics()
                 else:
                     # update existing
                     et = existing_track
@@ -369,6 +382,10 @@ def last_tracks(limit=20,offset=0):
 
 def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
+
+def unrated_tracks():
+    stats = Statistic.objects.filter(rating=0).order_by("createdate")
+    return [Track.objects.get(url=s.url) for s in stats]
 
 def get_current_playing_track():
     stdout_buffer = TemporaryFile()
