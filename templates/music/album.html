@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with album.guess_artist as artist %}
+
+{% if not artist %}
+<h1>Compilation: {{ album.name }}</h1>
+{% else %}
+<h1><a href="{{artist.get_absolute_url}}">{{artist.name}}</a> : {{ album.name}}</h1>
+{% endif %}
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>track</th>
+    {% if not artist %}
+    <th>artist</th>
+    {% endif %}
+    <th>last played</th>
+    <th>play count</th>
+    <th>rating</th>
+  </tr>
+
+  {% for track in album.track_set.all %}
+  <tr class="{% cycle 'even' 'odd' %}">
+    <td>{{track.track}}</td>
+    <td>{{track.title}}</td>
+    {% if not artist %}
+    <td>{{track.artist.name|default:"Unknown"}}</td>
+    {% endif %}
+    <td>{{track.statistics.accessed}}</td>
+    <td>{{track.statistics.playcounter}}</td>
+    <td><div class="rating-{{track.statistics.rating}}"/></td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endwith %}
+{% endblock %}

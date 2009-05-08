@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><a href="{{track.artist.get_absolute_url}}">{{ track.artist.name }}</a> 
+: 
+<a href="{{track.album.get_absolute_url}}">{{ track.album.name }}</a> 
+: {{ track.title }}</h1>
+
+<table>
+  <tr>
+    <th>file</th>
+    <td>{{track.url}}</td>
+  </tr>
+  
+  <tr>
+    <th>createdate</th>
+    <td>{{track.statistics.created}}</td>
+  </tr>
+
+  <tr>
+    <th>played</th>
+    <td>{{ track.statistics.playcounter }}
+      time{{track.statistics.playcounter|pluralize}} 
+{% if track.statistics.playcounter %}(last play:
+      {{track.statistics.accessed}}){% endif %}</td>
+  </tr>
+
+{% if track.composer.name %}
+  <tr>
+    <th>composer</th>
+    <td>{{track.composer.name}}</td>
+  </tr>
+{% endif %}
+
+  <tr>
+    <th>genre</th>
+    <td><a href="{{ track.genre.get_absolute_url }}">{{track.genre.name}}</a></td>
+  </tr>
+
+  <tr>
+    <th>year</th>
+    <td>{{track.year.name}}</td>
+  </tr>
+
+{% if track.comment %}
+  <tr>
+    <th>comment</th>
+    <td>{{track.comment}}</td>
+  </tr>
+{% endif %}
+
+{% if track.discnumber %}
+  <tr>
+    <th>discnumber</th>
+    <td>{{track.discnumber}}</td>
+  </tr>
+{% endif %}
+
+  <tr>
+    <th>bitrate</th>
+    <td>{{track.bitrate}}</td>
+  </tr>
+
+  <tr>
+    <th>length</th>
+    <td>{{track.minutes}}</td>
+  </tr>
+
+  <tr>
+    <th>samplerate </th>
+    <td>{{track.samplerate}}Hz</td>
+  </tr>
+
+  <tr>
+    <th>filesize </th>
+    <td>{{track.mb}}MB</td>
+  </tr>
+
+  <tr>
+    <th>filetype </th>
+    <td>{{track.filetype}}</td>
+  </tr>
+
+  <tr>
+    <th>sampler </th>
+    <td>{{track.sampler}}</td>
+  </tr>
+
+  <tr>
+    <th>bpm </th>
+    <td>{{track.bpm}}</td>
+  </tr>
+
+  <tr>
+    <th>rating</th>
+    <td><div class="rating-{{track.statistics.rating}}"></div></td>
+  </tr>
+
+</table>
+
+{% endblock %}

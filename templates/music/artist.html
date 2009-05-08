@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{artist.name}}</h1>
+<p><a href="{{artist.lastfm}}">on last.fm</a></p>
+
+<table>
+{% for track in artist.track_set.all %}
+
+
+{% ifchanged track.album.id %}
+<tr><th colspan="4"><h2><a href="{{track.album.get_absolute_url}}">{{track.album.name}}</a></h2></th></tr>
+{% endifchanged %}
+
+{% ifnotequal track.discnumber 0 %}
+{% ifchanged track.discnumber %}
+<tr><th colspan="4"><h3>{{track.discnumber}}</h3></th></tr>
+<tr>
+<th>#</th>
+<th>track</th>
+<th>length</th>
+<th>rating</th>
+</tr>
+
+{% endifchanged %}
+{% else %}
+{% ifchanged track.album.id %}
+<tr>
+<th>#</th>
+<th>track</th>
+<th>length</th>
+<th>rating</th>
+</tr>
+{% endifchanged %}
+{% endifnotequal %}
+
+<tr>
+  <td><a href="{{track.get_absolute_url}}">{{track.track}}</a></td>
+  <td><a href="{{track.get_absolute_url}}">{{track.title}}</a></td>
+  <td>{{track.minutes}}</td>
+  <td><div class="rating-{{track.statistics.rating}}"/></td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
