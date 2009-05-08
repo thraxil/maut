@@ -49,7 +49,6 @@ def scan_for_new_files():
                     continue
                 if os.stat(os.path.join(root,f))[ST_MTIME] < newest.modifydate:
                     continue
-                print os.path.join(root,f)
                 existing_track = None
                 try:
                     existing_track = Track.objects.get(url="." + os.path.join(root,f))
