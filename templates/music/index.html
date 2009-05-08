@@ -24,4 +24,27 @@
 {% endfor %}
 </table>
 
+<h2>last 20 tracks added</h3>
+
+<table>
+<tr>
+<th>track</th>
+<th>artist</th>
+<th>album</th>
+<th>when</th>
+<th>rating</th>
+</tr>
+
+{% for track in newest_tracks %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"}}</a></td>
+  <td><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></td>
+  <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
+  <td><nobr>{{track.statistics.created}}</nobr></td>
+  <td><div class="rating-{{track.statistics.rating}}"/></td>
+</tr>
+{% endfor %}
+</table>
+
+
 {% endblock %}

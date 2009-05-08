@@ -344,12 +344,12 @@ class Track(models.Model):
         except Statistic.DoesNotExist:
             return Statistic.objects.create(
                 url=self.url,
-                playcount=0,
+                playcounter=0,
                 percentage=0,
                 rating=0,
                 deleted=False,
                 createdate=self.createdate,
-                accessdate=self.accessdate)
+                accessdate=self.modifydate)
       
     def played(self):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
@@ -366,6 +366,9 @@ class Track(models.Model):
 def last_tracks(limit=20,offset=0):
     stats = Statistic.objects.all().order_by("-accessdate")[offset:offset+limit]
     return [Track.objects.get(url=s.url) for s in stats]
+
+def newest_tracks(limit=20,offset=0):
+    return Track.objects.all().order_by('-createdate')[offset:offset+limit]
 
 def get_current_playing_track():
     stdout_buffer = TemporaryFile()

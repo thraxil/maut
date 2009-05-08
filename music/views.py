@@ -30,7 +30,8 @@ class rendered_with(object):
 
 @rendered_with('music/index.html')
 def index(request):
-    return dict(last_tracks=last_tracks())
+    return dict(last_tracks=last_tracks(),
+                newest_tracks=newest_tracks())
 
 @rendered_with('music/artist.html')
 def artist(request,id):
