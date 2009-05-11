@@ -53,7 +53,7 @@ a.link, a, a.active {
 
 #wrapper {
   color: black;
-  font-size: 127%;
+//  font-size: 127%;
   background-color: white;
   width: 1000px;
   margin: 0 auto 0 auto;
@@ -241,3 +241,5 @@ background: #fff;
 }
 
 a.intersection {font-weight: bold;}
+
+td {font-size: .8em;}

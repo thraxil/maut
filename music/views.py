@@ -48,6 +48,13 @@ def track(request,id):
     track = get_object_or_404(Track,id=id)
     return dict(track=track)
 
+def rate_track(request,id):
+    track = get_object_or_404(Track,id=id)
+    rating = request.POST.get('rating','0')
+    track.rate(rating)
+    return HttpResponse("ok")
+
+
 def update(request):
     if request.method == "POST":
         track = get_current_playing_track()
