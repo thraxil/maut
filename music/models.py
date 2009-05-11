@@ -300,6 +300,13 @@ def full_search(q):
     albums = Album.objects.filter(name__icontains=q)
     return (title_tracks,artists,albums)
 
+class Setting(models.Model):
+    name = models.CharField(max_length=256)
+    value = models.CharField(max_length=256)
+
+def get_setting(name):
+    return Setting.objects.get(name=name).value
+
 class Track(models.Model):
     url = models.CharField(max_length=256)
     createdate = models.IntegerField()
@@ -381,6 +388,22 @@ class Track(models.Model):
         s = self.statistics()
         s.rating = int(rating)
         s.save()
+
+    def is_mp3(self):
+        return self.url.lower().endswith(".mp3")
+
+    def play(self):
+        url = self.url
+        parts = url.split('/')
+        new_parts = parts[:-1]
+        new_parts.append(urllib.quote(parts[-1]))
+        url = "/".join(new_parts)
+        username = get_setting('fs_username')
+        password = get_setting('fs_password')
+        if url.startswith("./home/anders/MyMusic/"):
+            url = url.replace("./home/anders/MyMusic/","http://%s:%s@behemoth.ccnmtl.columbia.edu/music/" % (username,password))
+        return url
+        
 
 def last_tracks(limit=20,offset=0):
     stats = Statistic.objects.all().order_by("-accessdate")[offset:offset+limit]

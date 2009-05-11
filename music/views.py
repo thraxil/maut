@@ -61,6 +61,19 @@ def track(request,id):
     track = get_object_or_404(Track,id=id)
     return dict(track=track)
 
+def track_playlist(self,id):
+    track = get_object_or_404(Track,id=id)
+    return HttpResponse("""<?xml version="1.0" encoding="UTF-8"?>
+    <playlist version="0" xmlns = "http://xspf.org/ns/0/">
+    <trackList>
+    <track>
+    <location>%s</location>
+    <annotation>%s</annotation>
+    </track>
+    </trackList>
+    </playlist>""" % (track.play(),track.title))
+
+
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
     rating = request.POST.get('rating','0')
