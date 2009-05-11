@@ -294,6 +294,12 @@ class Composer(models.Model):
     def __unicode__(self):
         return self.name
 
+def full_search(q):
+    title_tracks = Track.objects.filter(title__icontains=q)
+    artists = Artist.objects.filter(name__icontains=q)
+    albums = Album.objects.filter(name__icontains=q)
+    return (title_tracks,artists,albums)
+
 class Track(models.Model):
     url = models.CharField(max_length=256)
     createdate = models.IntegerField()

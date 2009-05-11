@@ -6,7 +6,7 @@
 </style>
 <script type="text/javascript" src="/site_media/js/rating/jquery.js"></script>
 <script type="text/javascript" src="/site_media/js/rating/rating.js"></script>
-<link rel="stylesheet" type="text/css" href="site_media/js/rating/rating.css" />
+<link rel="stylesheet" type="text/css" href="/site_media/js/rating/rating.css" />
 <script type="text/javascript">
 $(document).ready(function() {
 //        $('#rate1').rating('www.url.php', {maxvalue:5});
@@ -23,7 +23,13 @@ $(document).ready(function() {
 <div id="wrapper">
 <div id="breadcrumbs">{% block breadcrumbs %}{% endblock %}</div>
 <h1 id="masthead">{% block masthead %}{% endblock %}</span></h1>
-<div id="nav">{% block nav %}{% endblock %}</div>
+<div id="nav">
+  <a href="/">index</a>
+  <a href="/unrated/">unrated</a>
+{% block nav %}{% endblock %}
+<div id="search"><form action="/search/"
+		       method="get"><input type="text" name="q" /></form></div>
+</div>
 
 {% block content %}{% endblock %}
 </div>

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if artists %}
+<h2>artist matches</h2>
+<ul>
+  {% for artist in artists %}
+  <li><a href="{{artist.get_absolute_url}}">{{artist.name}}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+
+{% if albums %}
+<h2>album matches</h2>
+<ul>
+  {% for album in albums %}
+  <li><a href="{{album.get_absolute_url}}">{{album.name}}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+
+{% if tracks %}
+<h2>track matches</h2>
+
+<table>
+<tr>
+<th>track</th>
+<th>artist</th>
+<th>album</th>
+<th>played</th>
+<th>rating</th>
+</tr>
+
+{% for track in tracks %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"}}</a></td>
+  <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></nobr></td>
+  <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
+  <td><nobr>{% if track.statistics.playcounter %}{{track.statistics.accessed}}{% else %}never{% endif %}</nobr></td>
+  <td width="260"><nobr><div id="rate-{{track.id}}" class="rating"></div>
+    <script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.statistics.rating}}});</script></nobr>
+  </td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if albums %}
+{% else %}
+{% if artists %}
+{% else %}
+{% if tracks %}
+{% else %}
+<p>sorry, no matches found</p>
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% endblock %}

@@ -33,6 +33,19 @@ def index(request):
     return dict(last_tracks=last_tracks(),
                 newest_tracks=newest_tracks())
 
+@rendered_with('music/unrated.html')
+def unrated(request):
+    return dict(unrated=unrated_tracks())
+
+@rendered_with('music/search.html')
+def search(request):
+    q = request.GET.get('q','')
+    if len(q) < 3:
+        return HttpResponseRedirect("/")
+    (tracks,artists,albums) = full_search(q)
+    return dict(tracks=tracks,artists=artists,albums=albums)
+
+
 @rendered_with('music/artist.html')
 def artist(request,id):
     artist = get_object_or_404(Artist,id=id)
