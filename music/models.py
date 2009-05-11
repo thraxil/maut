@@ -396,7 +396,6 @@ class Track(models.Model):
         url = self.url.encode('utf-8')
         parts = url.split('/')
         new_parts = parts[:-1]
-        print str(parts)
         new_parts.append(urllib.quote(parts[-1]))
         url = "/".join(new_parts)
         username = get_setting('fs_username')
