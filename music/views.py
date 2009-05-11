@@ -73,6 +73,22 @@ def track_playlist(self,id):
     </trackList>
     </playlist>""" % (track.play(),track.title))
 
+def album_playlist(request,id):
+    album = get_object_or_404(Album,id=id)
+    parts = ["""<?xml version="1.0" encoding="UTF-8"?>
+    <playlist version="0" xmlns = "http://xspf.org/ns/0/">
+    <trackList>"""]
+    for track in album.track_set.all():
+        if not track.url.lower().endswith('mp3'):
+            continue
+        parts.append("""<track>
+        <location>%s</location>
+        <annotation>%s</annotation>
+        </track>""" % (track.play(),track.title))
+
+    parts.append("""</trackList></playlist>""")
+    return HttpResponse("".join(parts))
+
 
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)

@@ -9,6 +9,13 @@
 <h1><a href="{{artist.get_absolute_url}}">{{artist.name}}</a> : {{ album.name}}</h1>
 {% endif %}
 
+{% if not album.all_ogg %}
+<object type="application/x-shockwave-flash" width="400" height="170"
+data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
+<param name="movie" value="/site_media/swf/xspf_player.swf?playlist_url=playlist/" />
+</object>
+{% endif %}
+
 <table>
   <tr>
     <th>#</th>
