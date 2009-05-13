@@ -53,6 +53,7 @@ def scan_for_new_files():
     newest = get_newest_track()
     for (root,dirs,files) in os.walk(ROOT):
         if dirs == []:
+            files.sort()
             for f in files:
                 fl = f.lower()
                 if not fl.endswith('mp3') or fl.endswith('ogg'):
@@ -414,7 +415,10 @@ def newest_tracks(limit=20,offset=0):
 
 def unrated_tracks():
     stats = Statistic.objects.filter(rating=0).order_by("createdate")
-    return [Track.objects.get(url=s.url) for s in stats]
+    tracks = [Track.objects.get(url=s.url) for s in stats]
+    tracks.sort(lambda a,b: cmp("%s %s %02d" % (a.artist.name,a.album.name,a.track),
+                                "%s %s %02d" % (b.artist.name,b.album.name,b.track)))
+    return tracks
 
 def get_current_playing_track():
     stdout_buffer = TemporaryFile()
