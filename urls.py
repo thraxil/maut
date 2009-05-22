@@ -27,6 +27,7 @@ urlpatterns = patterns('',
                        (r'^track/(?P<id>\d+)/playlist/$','music.views.track_playlist'),
                        (r'^update/$','music.views.update'),
                        (r'^updatedb/$','music.views.updatedb'),
+                       (r'^deep_updatedb/$','music.views.deep_updatedb'),
                        (r'^queueunrated/$','music.views.queueunrated'),
                        (r'^rate_current/(?P<rating>\d+)/$','music.views.rate_current'),
 )

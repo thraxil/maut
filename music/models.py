@@ -17,7 +17,6 @@ def add_track_to_playlist(track):
     url = url.replace("./home/anders/MyMusic/","")
     command = ["/usr/bin/mpc","add",url]
 
-    print " ".join(command)
     p = Popen(command,stdout=PIPE,stderr=PIPE)
     (out,err) = p.communicate()
 
@@ -48,7 +47,7 @@ def albumsort(a,b):
 def get_newest_track():
     return Track.objects.all().order_by("-modifydate")[0]
 
-def scan_for_new_files():
+def scan_for_new_files(deep=False,new_only=False):
     ROOT = "/home/anders/MyMusic/"
     newest = get_newest_track()
     for (root,dirs,files) in os.walk(ROOT):
@@ -58,24 +57,36 @@ def scan_for_new_files():
                 fl = f.lower()
                 if not fl.endswith('mp3') or fl.endswith('ogg'):
                     continue
-                if os.stat(os.path.join(root,f))[ST_MTIME] < newest.modifydate:
-                    continue
+                if not deep:
+                    # only get ones "newer" than the newest file already in the db
+                    if os.stat(os.path.join(root,f))[ST_MTIME] < newest.modifydate:
+                        continue
                 existing_track = None
                 try:
-                    existing_track = Track.objects.get(url="." + os.path.join(root,f))
+                    fname = unicode("." + os.path.join(root,f))
+                except UnicodeDecodeError:
+                    continue
+                try:
+                    existing_track = Track.objects.get(url=fname)
                     # already exists
+                    if new_only:
+                        continue
                 except Track.DoesNotExist:
                     pass
-                data = get_id3_info_for_file(os.path.join(root,f))
-                artist = get_or_create_artist(unicode(data.get('TPE1','Unknown')))
-                title = unicode(data.get('TIT2','Unknown'))
-                album = get_or_create_album(unicode(data.get('TALB','Unknown')),artist)
-                year = get_or_create_year(unicode(data.get('TDRC','0000')))
-                track = unicode(data.get('TRCK','0'))
-                if '/' in track:
-                    track = track.split('/')[0]
-                track = int(track)
-                genre = get_or_create_genre(unicode(data.get('TCON','Unknown')))
+
+                try:
+                    data = get_id3_info_for_file(os.path.join(root,f))
+                    artist = get_or_create_artist(unicode(data.get('TPE1','Unknown')))
+                    title = unicode(data.get('TIT2','Unknown'))
+                    album = get_or_create_album(unicode(data.get('TALB','Unknown')),artist)
+                    year = get_or_create_year(unicode(data.get('TDRC','0000')))
+                    track = unicode(data.get('TRCK','0'))
+                    if '/' in track:
+                        track = track.split('/')[0]
+                    track = int(track)
+                    genre = get_or_create_genre(unicode(data.get('TCON','Unknown')))
+                except UnicodeEncodeError:
+                    continue
                 modifydate = os.stat(os.path.join(root,f))[ST_MTIME]
                 createdate = modifydate
                 composer = Composer.objects.get(name='')
@@ -116,28 +127,29 @@ def scan_for_new_files():
                     # created
                     s = t.statistics()
                 else:
-                    # update existing
-                    et = existing_track
-                    et.url = "." + os.path.join(root,f),
-                    et.createdate=int(createdate)
-                    et.modifydate=int(modifydate)
-                    et.album=album
-                    et.artist=artist
-                    et.composer=composer
-                    et.genre=genre
-                    et.title=title
-                    et.year=year
-                    et.comment=comment
-                    et.track=int(track)
-                    et.discnumber=int(discnumber)
-                    et.bitrate=int(bitrate)
-                    et.length=int(length)
-                    et.samplerate=int(samplerate)
-                    et.filesize=int(filesize)
-                    et.filetype=int(filetype)
-                    et.sampler=sampler
-                    et.bpm=bpm
-                    et.save()
+                    if not new_only:
+                        # update existing
+                        et = existing_track
+                        et.url = "." + os.path.join(root,f),
+                        et.createdate=int(createdate)
+                        et.modifydate=int(modifydate)
+                        et.album=album
+                        et.artist=artist
+                        et.composer=composer
+                        et.genre=genre
+                        et.title=title
+                        et.year=year
+                        et.comment=comment
+                        et.track=int(track)
+                        et.discnumber=int(discnumber)
+                        et.bitrate=int(bitrate)
+                        et.length=int(length)
+                        et.samplerate=int(samplerate)
+                        et.filesize=int(filesize)
+                        et.filetype=int(filetype)
+                        et.sampler=sampler
+                        et.bpm=bpm
+                        et.save()
                     
 
 def get_or_create_artist(name):
