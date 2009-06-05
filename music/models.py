@@ -47,8 +47,8 @@ def albumsort(a,b):
 def get_newest_track():
     return Track.objects.all().order_by("-modifydate")[0]
 
-def scan_for_new_files(deep=False,new_only=False):
-    ROOT = "/home/anders/MyMusic/"
+def scan_for_new_files(deep=False,new_only=False,start_dir=""):
+    ROOT = os.path.join("/home/anders/MyMusic/",start_dir).encode('utf-8')
     newest = get_newest_track()
     for (root,dirs,files) in os.walk(ROOT):
         if dirs == []:

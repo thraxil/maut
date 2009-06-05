@@ -126,6 +126,13 @@ def updatedb(request):
     scan_for_new_files()
     return HttpResponse(status=200,content="")
 
+def updatedir(request):
+    """ scan a single directory looking for new files """
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
+    scan_for_new_files(start_dir=request.POST['dir'],deep=True)
+    return HttpResponse(status=200,content="")
+
 def deep_updatedb(request):
     """ scan the music directory looking for new files """
 #    if request.method != "POST":
