@@ -340,6 +340,8 @@ class Track(models.Model):
     filetype = models.IntegerField()
     sampler = models.BooleanField()
     bpm = models.FloatField()
+    rating = models.IntegerField(default=0)
+
     class Meta:
         db_table = u'tags'
         ordering = ('album__name', 'discnumber','track','title')
@@ -385,7 +387,6 @@ class Track(models.Model):
                 url=self.url,
                 playcounter=0,
                 percentage=0,
-                rating=0,
                 deleted=False,
                 createdate=self.createdate,
                 accessdate=self.modifydate)
@@ -398,9 +399,8 @@ class Track(models.Model):
         s.save()
 
     def rate(self,rating):
-        s = self.statistics()
-        s.rating = int(rating)
-        s.save()
+        self.rating = int(rating)
+        self.save()
 
     def is_mp3(self):
         return self.url.lower().endswith(".mp3")
@@ -426,10 +426,11 @@ def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
 
 def unrated_tracks():
-    stats = Statistic.objects.filter(rating=0).order_by("createdate")
-    tracks = [Track.objects.get(url=s.url) for s in stats]
-    tracks.sort(lambda a,b: cmp("%s %s %02d" % (a.artist.name,a.album.name,a.track),
-                                "%s %s %02d" % (b.artist.name,b.album.name,b.track)))
+#    stats = Statistic.objects.filter(rating=0).order_by("createdate")
+#    tracks = [Track.objects.get(url=s.url) for s in stats]
+#    tracks.sort(lambda a,b: cmp("%s %s %02d" % (a.artist.name,a.album.name,a.track),
+#                                "%s %s %02d" % (b.artist.name,b.album.name,b.track)))
+    tracks = Track.objects.filter(rating=0).order_by(artist__name,album__name)
     return tracks
 
 def get_current_playing_track():

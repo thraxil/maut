@@ -38,7 +38,7 @@ data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
     <td>{{track.statistics.accessed}}</td>
     <td>{{track.statistics.playcounter}}</td>
     <td width="260"><nobr><div id="rate-{{track.id}}" class="rating"></div>
-	<script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.statistics.rating}}});</script></nobr>
+	<script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
     </td>
   </tr>
   {% endfor %}

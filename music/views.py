@@ -148,3 +148,7 @@ def queueunrated(request):
     for track in unrated:
         add_track_to_playlist(track)
     return HttpResponse(status=200,content="")
+
+@rendered_with('music/rating.html')
+def rating(request,rating):
+    return dict(tracks=Track.objects.filter(rating=10))

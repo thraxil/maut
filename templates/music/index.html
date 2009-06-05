@@ -20,7 +20,7 @@
   <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
   <td><nobr>{{track.statistics.accessed}}</nobr></td>
   <td width="260"><nobr><div id="rate-latest-{{track.id}}" class="rating"></div>
-    <script type="text/javascript">$('#rate-latest-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.statistics.rating}}});</script></nobr>
+    <script type="text/javascript">$('#rate-latest-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
   </td>
 </tr>
 {% endfor %}
@@ -44,7 +44,7 @@
   <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
   <td><nobr>{{track.statistics.created}}</nobr></td>
   <td width="260"><nobr><div id="rate-added-{{track.id}}" class="rating"></div>
-    <script type="text/javascript">$('#rate-added-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.statistics.rating}}});</script></nobr>
+    <script type="text/javascript">$('#rate-added-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
   </td>
 </tr>
 {% endfor %}
