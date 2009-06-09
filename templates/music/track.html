@@ -31,7 +31,7 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
     <td>{{ track.playcounter }}
       time{{track.playcounter|pluralize}} 
 {% if track.playcounter %}(last play:
-      {{track.statistics.accessed}}){% endif %}</td>
+      {{track.accessed}}){% endif %}</td>
   </tr>
 
 {% if track.composer.name %}

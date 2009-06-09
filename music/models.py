@@ -22,8 +22,7 @@ def add_track_to_playlist(track):
 
 
 def last_played_track():
-    s = Statistic.objects.all().order_by("-accessdate")[0]
-    return Track.objects.get(url=s.url)
+    return Track.objects.all().order_by("-accessdate")[0]
 
 def sort_normalize_name(name):
     name = name.lower()
@@ -229,12 +228,9 @@ class Lyrics(models.Model):
 
 class Statistic(models.Model):
     url = models.TextField()
-    accessdate = models.IntegerField()
     class Meta:
         db_table = u'statistics'
 
-    def accessed(self):
-        return datetime.datetime.fromtimestamp(self.accessdate)
 
     def track(self):
         return Track.objects.get(url=self.url)
@@ -315,6 +311,7 @@ def get_setting(name):
 class Track(models.Model):
     url = models.CharField(max_length=256)
     createdate = models.IntegerField()
+    accessdate = models.IntegerField()
     modifydate = models.IntegerField()
     album = models.ForeignKey(Album,db_column="album")
     artist = models.ForeignKey(Artist,db_column="artist")
@@ -378,18 +375,20 @@ class Track(models.Model):
         except Statistic.DoesNotExist:
             return Statistic.objects.create(
                 url=self.url,
-                deleted=False,
-                accessdate=self.modifydate)
+                deleted=False)
 
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
       
     def played(self):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
-        s = self.statistics()
         self.playcounter = self.playcounter + 1
-        s.accessdate = accessdate
-        s.save()
+        self.accessdate = accessdate
+        self.save()
+
+    def accessed(self):
+        return datetime.datetime.fromtimestamp(self.accessdate)
+
 
     def rate(self,rating):
         self.rating = int(rating)
@@ -412,8 +411,7 @@ class Track(models.Model):
         
 
 def last_tracks(limit=20,offset=0):
-    stats = Statistic.objects.all().order_by("-accessdate")[offset:offset+limit]
-    return [Track.objects.get(url=s.url) for s in stats]
+    return Track.objects.all().order_by("-accessdate")[offset:offset+limit]
 
 def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]

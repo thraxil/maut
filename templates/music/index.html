@@ -18,7 +18,7 @@
   <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"}}</a></td>
   <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></nobr></td>
   <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
-  <td><nobr>{{track.statistics.accessed}}</nobr></td>
+  <td><nobr>{{track.accessed}}</nobr></td>
   <td width="260"><nobr><div id="rate-latest-{{track.id}}" class="rating"></div>
     <script type="text/javascript">$('#rate-latest-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
   </td>
