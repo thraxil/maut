@@ -122,9 +122,6 @@ def scan_for_new_files(deep=False,new_only=False,start_dir=""):
                         filetype=int(filetype),
                         sampler=sampler,
                         bpm=bpm)
-                    # make sure corresponding statistics object is
-                    # created
-                    s = t.statistics()
                 else:
                     if not new_only:
                         # update existing
@@ -225,16 +222,6 @@ class Lyrics(models.Model):
     lyrics = models.TextField()
     class Meta:
         db_table = u'lyrics'
-
-class Statistic(models.Model):
-    url = models.TextField()
-    class Meta:
-        db_table = u'statistics'
-
-
-    def track(self):
-        return Track.objects.get(url=self.url)
-
 
 class Label(models.Model):
     name = models.TextField()
@@ -369,14 +356,6 @@ class Track(models.Model):
     def filename(self):
         return self.url.split('/')[-1]
 
-    def statistics(self):
-        try:
-            return Statistic.objects.get(url=self.url)
-        except Statistic.DoesNotExist:
-            return Statistic.objects.create(
-                url=self.url,
-                deleted=False)
-
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
       
@@ -417,10 +396,6 @@ def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
 
 def unrated_tracks():
-#    stats = Statistic.objects.filter(rating=0).order_by("createdate")
-#    tracks = [Track.objects.get(url=s.url) for s in stats]
-#    tracks.sort(lambda a,b: cmp("%s %s %02d" % (a.artist.name,a.album.name,a.track),
-#                                "%s %s %02d" % (b.artist.name,b.album.name,b.track)))
     tracks = Track.objects.filter(rating=0).order_by(artist__name,album__name,createdate)
     return tracks
 
