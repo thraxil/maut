@@ -28,15 +28,18 @@ class rendered_with(object):
 
         return rendered_func
 
+@login_required
 @rendered_with('music/index.html')
 def index(request):
     return dict(last_tracks=last_tracks(),
                 newest_tracks=newest_tracks())
 
+@login_required
 @rendered_with('music/unrated.html')
 def unrated(request):
     return dict(unrated=unrated_tracks())
 
+@login_required
 @rendered_with('music/search.html')
 def search(request):
     q = request.GET.get('q','')
@@ -45,17 +48,19 @@ def search(request):
     (tracks,artists,albums) = full_search(q)
     return dict(tracks=tracks,artists=artists,albums=albums)
 
-
+@login_required
 @rendered_with('music/artist.html')
 def artist(request,id):
     artist = get_object_or_404(Artist,id=id)
     return dict(artist=artist)
 
+@login_required
 @rendered_with('music/album.html')
 def album(request,id):
     album = get_object_or_404(Album,id=id)
     return dict(album=album)
 
+@login_required
 @rendered_with('music/track.html')
 def track(request,id):
     track = get_object_or_404(Track,id=id)
