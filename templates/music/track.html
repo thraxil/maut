@@ -28,9 +28,9 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
 
   <tr>
     <th>played</th>
-    <td>{{ track.statistics.playcounter }}
-      time{{track.statistics.playcounter|pluralize}} 
-{% if track.statistics.playcounter %}(last play:
+    <td>{{ track.playcounter }}
+      time{{track.playcounter|pluralize}} 
+{% if track.playcounter %}(last play:
       {{track.statistics.accessed}}){% endif %}</td>
   </tr>
 

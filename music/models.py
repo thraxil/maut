@@ -231,10 +231,6 @@ class Statistic(models.Model):
     url = models.TextField()
     createdate = models.IntegerField()
     accessdate = models.IntegerField()
-    percentage = models.FloatField()
-    rating = models.IntegerField()
-    playcounter = models.IntegerField()
-    deleted = models.BooleanField()
     class Meta:
         db_table = u'statistics'
 
@@ -341,6 +337,7 @@ class Track(models.Model):
     sampler = models.BooleanField()
     bpm = models.FloatField()
     rating = models.IntegerField(default=0)
+    playcounter = models.IntegerField(default=0)
 
     class Meta:
         db_table = u'tags'
@@ -385,8 +382,6 @@ class Track(models.Model):
         except Statistic.DoesNotExist:
             return Statistic.objects.create(
                 url=self.url,
-                playcounter=0,
-                percentage=0,
                 deleted=False,
                 createdate=self.createdate,
                 accessdate=self.modifydate)
@@ -394,7 +389,7 @@ class Track(models.Model):
     def played(self):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
         s = self.statistics()
-        s.playcounter = s.playcounter + 1
+        self.playcounter = self.playcounter + 1
         s.accessdate = accessdate
         s.save()
 
