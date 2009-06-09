@@ -396,7 +396,7 @@ def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
 
 def unrated_tracks():
-    tracks = Track.objects.filter(rating=0).order_by(artist__name,album__name,createdate)
+    tracks = Track.objects.filter(rating=0).order_by('artist__name','album__name','track','createdate')
     return tracks
 
 def get_current_playing_track():
