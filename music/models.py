@@ -229,13 +229,9 @@ class Lyrics(models.Model):
 
 class Statistic(models.Model):
     url = models.TextField()
-    createdate = models.IntegerField()
     accessdate = models.IntegerField()
     class Meta:
         db_table = u'statistics'
-
-    def created(self):
-        return datetime.datetime.fromtimestamp(self.createdate)
 
     def accessed(self):
         return datetime.datetime.fromtimestamp(self.accessdate)
@@ -383,8 +379,10 @@ class Track(models.Model):
             return Statistic.objects.create(
                 url=self.url,
                 deleted=False,
-                createdate=self.createdate,
                 accessdate=self.modifydate)
+
+    def created(self):
+        return datetime.datetime.fromtimestamp(self.createdate)
       
     def played(self):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
@@ -425,7 +423,7 @@ def unrated_tracks():
 #    tracks = [Track.objects.get(url=s.url) for s in stats]
 #    tracks.sort(lambda a,b: cmp("%s %s %02d" % (a.artist.name,a.album.name,a.track),
 #                                "%s %s %02d" % (b.artist.name,b.album.name,b.track)))
-    tracks = Track.objects.filter(rating=0).order_by(artist__name,album__name)
+    tracks = Track.objects.filter(rating=0).order_by(artist__name,album__name,createdate)
     return tracks
 
 def get_current_playing_track():
