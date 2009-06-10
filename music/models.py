@@ -390,7 +390,7 @@ class Track(models.Model):
         
 
 def last_tracks(limit=20,offset=0):
-    return Track.objects.all().order_by("-accessdate")[offset:offset+limit]
+    return Track.objects.filter(playcounter__gt=0).order_by("-accessdate")[offset:offset+limit]
 
 def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
