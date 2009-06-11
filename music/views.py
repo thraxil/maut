@@ -156,4 +156,4 @@ def queueunrated(request):
 
 @rendered_with('music/rating.html')
 def rating(request,rating):
-    return dict(tracks=Track.objects.filter(rating=10))
+    return dict(tracks=Track.objects.filter(rating=rating))
