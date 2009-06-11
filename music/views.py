@@ -141,8 +141,8 @@ def updatedir(request):
 
 def deep_updatedb(request):
     """ scan the music directory looking for new files """
-#    if request.method != "POST":
-#        return HttpResponse(status=200,content="")
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
     scan_for_new_files(deep=True,new_only=True)
     return HttpResponse(status=200,content="")
 
