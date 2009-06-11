@@ -11,6 +11,7 @@ from stat import ST_SIZE,ST_MTIME
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
 from mutagen.flac import FLAC
+import shutil
 
 def add_track_to_playlist(track):
     url = track.url
@@ -387,6 +388,32 @@ class Track(models.Model):
         if url.startswith("./home/anders/MyMusic/"):
             url = url.replace("./home/anders/MyMusic/","http://%s:%s@behemoth.ccnmtl.columbia.edu/music/" % (username,password))
         return url
+
+    def ipod_filename(self):
+        filename = self.url
+        filename = filename.replace("./home/anders/MyMusic/","/media/ipod/10/")
+        return filename
+
+    def ipod_dir(self):
+        filename = self.ipod_filename()
+        return "/".join(filename.split("/")[:-1])
+
+    def copy_to_ipod(self):
+        try:
+            os.makedirs(self.ipod_dir())
+        except:
+            pass
+        if not os.path.exists(self.ipod_filename()):
+            print "copying to %s" % self.ipod_filename()
+            try:
+                shutil.copyfile(self.url[1:],self.ipod_filename())
+            except IOError:
+                print "IOError"
+                pass
+        else:
+            print "%s already exists" % self.ipod_filename()
+            
+
         
 
 def last_tracks(limit=20,offset=0):

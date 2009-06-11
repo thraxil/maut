@@ -13,7 +13,8 @@ import os.path
 import cStringIO
 from tempfile import TemporaryFile
 from django.core.paginator import Paginator
-
+import random
+import os
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -170,3 +171,20 @@ def rating(request,rating):
         tracks = paginator.page(paginator.num_pages)
 
     return dict(tracks=tracks)
+
+def load_ipod(request):
+    IPOD = "/media/ipod/"
+    try:
+        os.makedirs(IPOD + "10")
+    except:
+        pass
+    log = []
+    for track in Track.objects.filter(rating=10):
+        track.copy_to_ipod()
+        log.append(track.ipod_filename())
+    random.shuffle(log)
+    playlist = open(IPOD + "10" + "/all.m3u","w")
+    for line in log:
+        playlist.write(line + "\n")
+    playlist.close()
+    return HttpResponse("ok")

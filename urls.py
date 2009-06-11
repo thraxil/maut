@@ -30,6 +30,7 @@ urlpatterns = patterns('',
                        (r'^updatedir/$','music.views.updatedir'),
                        (r'^deep_updatedb/$','music.views.deep_updatedb'),
                        (r'^queueunrated/$','music.views.queueunrated'),
+                       (r'^loadipod/$','music.views.load_ipod'),
                        (r'^rate_current/(?P<rating>\d+)/$','music.views.rate_current'),
                        (r'^rating/(?P<rating>\d+)/$','music.views.rating'),
 )
