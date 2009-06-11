@@ -12,6 +12,7 @@ from subprocess import Popen,PIPE
 import os.path
 import cStringIO
 from tempfile import TemporaryFile
+from django.core.paginator import Paginator
 
 
 class rendered_with(object):
@@ -156,4 +157,16 @@ def queueunrated(request):
 
 @rendered_with('music/rating.html')
 def rating(request,rating):
-    return dict(tracks=Track.objects.filter(rating=rating))
+    paginator = Paginator(Track.objects.filter(rating=rating), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+
+    return dict(tracks=tracks)

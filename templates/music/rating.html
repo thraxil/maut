@@ -2,7 +2,23 @@
 
 {% block content %}
 
-<h2>tracks</h3>
+<h2>{{tracks.paginator.count}} tracks</h3>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if tracks.has_previous %}
+            <a href="?page={{ tracks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ tracks.number }} of {{ tracks.paginator.num_pages }}.
+        </span>
+
+        {% if tracks.has_next %}
+            <a href="?page={{ tracks.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 
 <table>
 <tr>
@@ -12,7 +28,7 @@
 <th>played</th>
 </tr>
 
-{% for track in tracks %}
+{% for track in tracks.object_list %}
 <tr class="{% cycle 'even' 'odd' %}">
   <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"}}</a></td>
   <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></nobr></td>
@@ -21,5 +37,22 @@
 </tr>
 {% endfor %}
 </table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if tracks.has_previous %}
+            <a href="?page={{ tracks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ tracks.number }} of {{ tracks.paginator.num_pages }}.
+        </span>
+
+        {% if tracks.has_next %}
+            <a href="?page={{ tracks.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
 
 {% endblock %}
