@@ -185,6 +185,9 @@ def load_ipod(request):
     random.shuffle(log)
     playlist = open(IPOD + "10" + "/all.m3u","w")
     for line in log:
-        playlist.write(line + "\n")
+        try:
+            playlist.write(line + "\n")
+        except UnicodeEncodeError:
+            pass
     playlist.close()
     return HttpResponse("ok")

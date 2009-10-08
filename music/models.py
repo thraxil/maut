@@ -408,12 +408,9 @@ class Track(models.Model):
             try:
                 shutil.copyfile(self.url[1:],self.ipod_filename())
             except IOError:
-                print "IOError"
                 pass
         else:
-            print "%s already exists" % self.ipod_filename()
-            
-
+            pass
         
 
 def last_tracks(limit=20,offset=0):
