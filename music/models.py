@@ -438,7 +438,10 @@ def get_current_playing_track():
     stdout_buffer.close()
     stderr_buffer.close()
     filename = stdout.split("\n")[0].strip()
-    full_filename = os.path.join("./home/anders/MyMusic",filename)
+    if not filename.startswith('http://'):
+        full_filename = os.path.join("./home/anders/MyMusic",filename)
+    else:
+        full_filename = filename
 
     try:
         return Track.objects.get(url=full_filename)
