@@ -12,10 +12,21 @@ from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
 from mutagen.flac import FLAC
 import shutil
+import urllib2
+
+TAHOE_BASE = "http://localhost:3456/"
 
 def add_track_to_playlist(track):
     url = track.url
-    url = url.replace("./home/anders/MyMusic/","")
+
+    if url.startswith("URI:"):
+        # play straight from tahoe
+        fname = "file.mp3"
+        if track.filetype != 1:
+            fname = "file.ogg"
+        url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+    else:
+        url = url.replace("./home/anders/MyMusic/","")
     command = ["/usr/bin/mpc","add",url]
 
     p = Popen(command,stdout=PIPE,stderr=PIPE)
@@ -46,6 +57,56 @@ def albumsort(a,b):
 
 def get_newest_track():
     return Track.objects.all().order_by("-modifydate")[0]
+
+def add_track_from_tahoe(cap,filename="",artist="Unknown",
+                         album="Unknown",title="Unknown",
+                         modifydate=None, year='0000',
+                         track='0',genre='Unknown',length="0",
+                         samplerate="0",bitrate="0",filesize="0"):
+    if not filename.endswith(".mp3") or filename.endswith(".ogg"):
+        return
+    r = Track.objects.filter(url=cap)
+    if r.count() > 0:
+        # already in there
+        return
+
+    artist = get_or_create_artist(artist)
+    album = get_or_create_album(album,artist)
+    year = get_or_create_year(year)
+    if '/' in track:
+        track = track.split('/')[0]
+        track = int(track)
+    genre = get_or_create_genre(genre)
+    createdate = modifydate
+    composer = Composer.objects.get(name='')
+    comment = ""
+    filetype = 1
+    if filename.lower().endswith('ogg'):
+        filetype = 2
+    sampler = False
+    bpm = 0.0
+    discnumber = 0
+    t = Track.objects.create(
+        url = cap,
+        createdate=int(createdate),
+        modifydate=int(modifydate),
+        album=album,
+        artist=artist,
+        composer=composer,
+        genre=genre,
+        title=title,
+        year=year,
+        comment=comment,
+        track=int(track),
+        discnumber=int(discnumber),
+        bitrate=int(bitrate),
+        length=int(length),
+        samplerate=int(samplerate),
+        filesize=int(filesize),
+        filetype=int(filetype),
+        sampler=sampler,
+        bpm=bpm)
+    
 
 def scan_for_new_files(deep=False,new_only=False,start_dir=""):
     ROOT = os.path.join("/home/anders/MyMusic/",start_dir).encode('utf-8')
@@ -347,7 +408,13 @@ class Track(models.Model):
         url = self.url
         if url.startswith("./home/anders/MyMusic/"):
             url = url.replace("./home/anders/MyMusic/","http://behemoth.ccnmtl.columbia.edu/music/")
+        if url.startswith("URI:"):
+            fname = "file.mp3"
+            if track.filetype != 1:
+                fname = "file.ogg"
+            url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
+
     def relative_path(self):
         url = self.url
         if url.startswith("./home/anders/MyMusic/"):
@@ -355,7 +422,13 @@ class Track(models.Model):
         return url
 
     def filename(self):
-        return self.url.split('/')[-1]
+        if not self.url.startswith("URI:"):
+            return self.url.split('/')[-1]
+        else:
+            if self.filetype == 2:
+                return "file.ogg"
+            else:
+                return "file.mp3"
 
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
@@ -390,15 +463,18 @@ class Track(models.Model):
         return url
 
     def ipod_filename(self):
+        # TODO: broken with tahoe
         filename = self.url
         filename = filename.replace("./home/anders/MyMusic/","/media/ipod/10/")
         return filename
 
     def ipod_dir(self):
+        # TODO: broken with tahoe
         filename = self.ipod_filename()
         return "/".join(filename.split("/")[:-1])
 
     def copy_to_ipod(self):
+        # TODO: broken with ipod
         try:
             os.makedirs(self.ipod_dir())
         except:
@@ -423,6 +499,11 @@ def unrated_tracks():
     tracks = Track.objects.filter(rating=0).order_by('artist__name','album__name','track','createdate')
     return tracks
 
+def extract_tahoe_cap(url):
+    parts = url.split("/")
+    cap = parts[4].replace("%3A",":")
+    return cap
+
 def get_current_playing_track():
     stdout_buffer = TemporaryFile()
     stderr_buffer = TemporaryFile()
@@ -441,7 +522,8 @@ def get_current_playing_track():
     if not filename.startswith('http://'):
         full_filename = os.path.join("./home/anders/MyMusic",filename)
     else:
-        full_filename = filename
+        # tahoe url. need to extract the CAP
+        full_filename = extract_tahoe_cap(filename)
 
     try:
         return Track.objects.get(url=full_filename)

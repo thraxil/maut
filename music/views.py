@@ -140,6 +140,24 @@ def updatedir(request):
     scan_for_new_files(start_dir=request.POST['dir'],deep=True)
     return HttpResponse(status=200,content="")
 
+def add_from_tahoe(request):
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
+    add_track_from_tahoe(cap=request.POST['cap'],
+                         artist=request.POST['artist'],
+                         album=request.POST['album'],
+                         title=request.POST['title'],
+                         filename=request.POST.get("filename",""),
+                         modifydate=request.POST.get("modifydate",""), 
+                         year=request.POST.get('year','0000'),
+                         track=request.POST.get('track','0'),
+                         genre=request.POST.get('genre','Unknown'),
+                         length=request.POST.get("length","0"),
+                         samplerate=request.POST.get("samplerate","0"),
+                         bitrate=request.POST.get("bitrate","0"),
+                         filesize=request.POST.get("filesize","0"))
+    return HttpResponse(status=200,content="ok")
+
 def deep_updatedb(request):
     """ scan the music directory looking for new files """
     if request.method != "POST":
@@ -173,6 +191,7 @@ def rating(request,rating):
     return dict(tracks=tracks)
 
 def load_ipod(request):
+    # TODO: broken with tahoe
     IPOD = "/media/ipod/"
     try:
         os.makedirs(IPOD + "10")
