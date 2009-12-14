@@ -86,7 +86,7 @@ def album_playlist(request,id):
     <playlist version="0" xmlns = "http://xspf.org/ns/0/">
     <trackList>"""]
     for track in album.track_set.all():
-        if not track.url.lower().endswith('mp3'):
+        if not track.filetype == 1:
             continue
         parts.append("""<track>
         <location>%s</location>

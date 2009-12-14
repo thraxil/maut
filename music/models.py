@@ -448,10 +448,16 @@ class Track(models.Model):
         self.save()
 
     def is_mp3(self):
-        return self.url.lower().endswith(".mp3")
+        return self.filetype == 1
 
     def play(self):
         url = self.url.encode('utf-8')
+        if url.startswith("URI"):
+            fname = "file.mp3"
+            if self.filetype != 1:
+                fname = "file.ogg"
+            return TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+
         parts = url.split('/')
         new_parts = parts[:-1]
         new_parts.append(urllib.quote(parts[-1]))
@@ -460,6 +466,7 @@ class Track(models.Model):
         password = get_setting('fs_password')
         if url.startswith("./home/anders/MyMusic/"):
             url = url.replace("./home/anders/MyMusic/","http://%s:%s@behemoth.ccnmtl.columbia.edu/music/" % (username,password))
+            
         return url
 
     def ipod_filename(self):
