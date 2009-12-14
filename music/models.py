@@ -14,7 +14,7 @@ from mutagen.flac import FLAC
 import shutil
 import urllib2
 
-TAHOE_BASE = "http://localhost:3456/"
+TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 
 def add_track_to_playlist(track):
     url = track.url
