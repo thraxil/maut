@@ -37,11 +37,6 @@ def index(request):
                 newest_tracks=newest_tracks())
 
 @login_required
-@rendered_with('music/unrated.html')
-def unrated(request):
-    return dict(unrated=unrated_tracks())
-
-@login_required
 @rendered_with('music/search.html')
 def search(request):
     q = request.GET.get('q','')
@@ -176,7 +171,7 @@ def queueunrated(request):
 
 @rendered_with('music/rating.html')
 def rating(request,rating):
-    paginator = Paginator(Track.objects.filter(rating=rating), 100)
+    paginator = Paginator(Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate'), 100)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -189,6 +184,15 @@ def rating(request,rating):
         tracks = paginator.page(paginator.num_pages)
 
     return dict(tracks=tracks)
+
+@rendered_with('music/ratings.html')
+def ratings(request):
+    data = []
+    for r in range(11):
+        tc = Track.objects.filter(rating=r).count()
+        data.append(dict(rating=r,count=tc))
+    data.reverse()
+    return dict(ratings=data)
 
 def load_ipod(request):
     # TODO: broken with tahoe

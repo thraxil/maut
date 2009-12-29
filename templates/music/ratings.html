@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table>
+<tr><th>rating</th><th># tracks</th></tr>
+{% for r in ratings %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{r.rating}}/">{{r.rating}}</a></td>
+  <td><a href="{{r.rating}}/">{{r.count}}</a></td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

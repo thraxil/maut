@@ -17,7 +17,6 @@ urlpatterns = patterns('',
                        (r'^uploads/(?P<path>.*)$','django.views.static.serve',{'document_root' : settings.MEDIA_ROOT}),
 
                        (r'^$','music.views.index'),
-                       (r'^unrated/$','music.views.unrated'),
                        (r'^search/$','music.views.search'),
                        (r'^artist/(?P<id>\d+)/$','music.views.artist'),
                        (r'^album/(?P<id>\d+)/$','music.views.album'),
@@ -34,4 +33,5 @@ urlpatterns = patterns('',
                        (r'^loadipod/$','music.views.load_ipod'),
                        (r'^rate_current/(?P<rating>\d+)/$','music.views.rate_current'),
                        (r'^rating/(?P<rating>\d+)/$','music.views.rating'),
+                       (r'^rating/$','music.views.ratings'),
 )
