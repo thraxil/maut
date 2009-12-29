@@ -42,8 +42,8 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
 {% endif %}
 
   <tr>
-    <th>genre</th>
-    <td><a href="{{ track.genre.get_absolute_url }}">{{track.genre.name}}</a></td>
+    <th><a href="/genre/">genre</a></th>
+    <td><a href="{{ track.genre.get_absolute_url }}">{{track.genre.name|default:"none"}}</a></td>
   </tr>
 
   <tr>
@@ -108,6 +108,22 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
     </td>
   </tr>
 
+  <tr>
+    <th>tags</th>
+    <td>
+      {% for tag in track.tags %}
+      <a href="/tag/{{tag.name}}/">{{tag.name}}</a>
+      {% endfor %}
+
+<form action="tag/" method="post">
+<input type="text" name="tags" 
+       value="{% for tag in track.tags %}{{tag.name}}{% if not forloop.last%}, {%endif%}{%endfor%}" />
+<input type="submit" value="update tags" />
+</form>
+
+    </td>
+
 </table>
+
 
 {% endblock %}

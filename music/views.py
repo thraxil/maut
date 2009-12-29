@@ -15,6 +15,7 @@ from tempfile import TemporaryFile
 from django.core.paginator import Paginator
 import random
 import os
+import tagging
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -227,6 +228,34 @@ def merge_genre(request,genre):
         t.save()
     g.delete()
     return HttpResponseRedirect(ng.get_absolute_url())
+
+def update_track_tags(request,id):
+    track = get_object_or_404(Track,id=id)
+    track.tags = request.POST['tags']
+    track.save()
+    return HttpResponseRedirect(track.get_absolute_url())
+
+@rendered_with('music/tags.html')
+def tags(request):
+    return dict(tags=tagging.models.Tag.objects.all().order_by('name'))
+
+@rendered_with('music/tag.html')
+def tag(request,tag):
+    t = get_object_or_404(tagging.models.Tag,name=tag)
+    paginator = Paginator(t.items.get_by_model(Track,[t]).order_by('artist__name','album__name','track','createdate'), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+
+
+    return dict(tag=t,tracks=tracks)
 
 def load_ipod(request):
     # TODO: broken with tahoe

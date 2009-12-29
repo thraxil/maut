@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>tags</h3>
+
+<table>
+{% for t in tags %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{t.name}}/">{{t.name}}</a></td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

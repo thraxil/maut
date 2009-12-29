@@ -23,6 +23,7 @@ urlpatterns = patterns('',
                        (r'^album/(?P<id>\d+)/playlist/$','music.views.album_playlist'),
                        (r'^track/(?P<id>\d+)/$','music.views.track'),
                        (r'^track/(?P<id>\d+)/rate/$','music.views.rate_track'),
+                       (r'^track/(?P<id>\d+)/tag/$','music.views.update_track_tags'),
                        (r'^track/(?P<id>\d+)/playlist/$','music.views.track_playlist'),
                        (r'^update/$','music.views.update'),
                        (r'^updatedb/$','music.views.updatedb'),
@@ -37,5 +38,8 @@ urlpatterns = patterns('',
                        (r'^genre/(?P<genre>\d+)/$','music.views.genre'),
                        (r'^genre/$','music.views.genres'),
                        (r'^genre/(?P<genre>\d+)/change/$','music.views.merge_genre'),
+
+                       (r'^tag/$','music.views.tags'),
+                       (r'^tag/(?P<tag>.+)/$','music.views.tag'),
                        
 )

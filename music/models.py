@@ -13,6 +13,7 @@ from mutagen.oggvorbis import OggVorbis
 from mutagen.flac import FLAC
 import shutil
 import urllib2
+import tagging
 
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 
@@ -288,24 +289,6 @@ class Lyrics(models.Model):
     class Meta:
         db_table = u'lyrics'
 
-class Label(models.Model):
-    name = models.TextField()
-    type = models.IntegerField()
-    class Meta:
-        db_table = u'labels'
-
-    def __unicode__(self):
-        return self.name
-    def get_absolute_url(self):
-        return "/label/%d/" % self.id
-
-
-class TrackLabel(models.Model):
-    url = models.TextField()
-    labelid = models.ForeignKey(Label, db_column='labelid')
-    class Meta:
-        db_table = u'tags_labels'
-
 class Album(models.Model):
     name = models.TextField()
     class Meta:
@@ -497,7 +480,11 @@ class Track(models.Model):
                 pass
         else:
             pass
-        
+
+try:
+    tagging.register(Track)
+except tagging.AlreadyRegistered:
+    pass
 
 def last_tracks(limit=20,offset=0):
     return Track.objects.filter(playcounter__gt=0).order_by("-accessdate")[offset:offset+limit]
