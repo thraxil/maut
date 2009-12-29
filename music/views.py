@@ -194,6 +194,30 @@ def ratings(request):
     data.reverse()
     return dict(ratings=data)
 
+@rendered_with('music/genres.html')
+def genres(request):
+    data = []
+    for g in Genre.objects.all().order_by('name'):
+        tc = Track.objects.filter(genre=g).count()
+        data.append(dict(genre=g,count=tc))
+    return dict(genres=data)
+
+@rendered_with('music/genre.html')
+def genre(request,genre):
+    g = get_object_or_404(Genre,id=genre)
+    paginator = Paginator(Track.objects.filter(genre=g).order_by('artist__name','album__name','track','createdate'), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+    return dict(genre=g,tracks=tracks)
+
 def load_ipod(request):
     # TODO: broken with tahoe
     IPOD = "/media/ipod/"

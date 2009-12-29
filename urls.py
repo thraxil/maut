@@ -34,4 +34,7 @@ urlpatterns = patterns('',
                        (r'^rate_current/(?P<rating>\d+)/$','music.views.rate_current'),
                        (r'^rating/(?P<rating>\d+)/$','music.views.rating'),
                        (r'^rating/$','music.views.ratings'),
+                       (r'^genre/(?P<genre>\d+)/$','music.views.genre'),
+                       (r'^genre/$','music.views.genres'),
+                       
 )

@@ -24,9 +24,10 @@ $(document).ready(function() {
 <div id="breadcrumbs">{% block breadcrumbs %}{% endblock %}</div>
 <h1 id="masthead">{% block masthead %}{% endblock %}</span></h1>
 <div id="nav">
-  <a href="/">index</a>
-  <a href="/rating/0/">unrated</a>
-  <a href="/rating/">by rating</a>
+  <a href="/">index</a> |
+  <a href="/rating/0/">unrated</a> |
+  <a href="/rating/">by rating</a> |
+  <a href="/genre/">by genre</a>
 {% block nav %}{% endblock %}
 <div id="search"><form action="/search/"
 		       method="get"><input type="text" name="q" /></form></div>

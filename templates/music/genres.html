@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>browse by genres</h3>
+
+<table>
+<tr>
+<th>genres</th>
+<th># tracks</th>
+</tr>
+
+{% for g in genres %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{g.genre.get_absolute_url}}">{{g.genre.name}}</a></td>
+  <td><a href="{{g.genre.get_absolute_url}}">{{g.count}}</a></td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
