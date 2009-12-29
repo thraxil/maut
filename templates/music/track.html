@@ -109,10 +109,10 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
   </tr>
 
   <tr>
-    <th>tags</th>
+    <th><a href="/tag/">tags</a></th>
     <td>
       {% for tag in track.tags %}
-      <a href="/tag/{{tag.name}}/">{{tag.name}}</a>
+      <a href="/tag/{{tag.name}}/">{{tag.name}}</a>[<a href="tagup/{{tag.name}}/">&uarr;</a>]
       {% endfor %}
 
 <form action="tag/" method="post">

@@ -235,6 +235,19 @@ def update_track_tags(request,id):
     track.save()
     return HttpResponseRedirect(track.get_absolute_url())
 
+def track_tagup(request,id,tag):
+    track = get_object_or_404(Track,id=id)
+    t = get_object_or_404(tagging.models.Tag,name=tag)
+    tagging.models.Tag.objects.add_tag(track.artist,"\"%s\"" % t.name)
+    return HttpResponseRedirect(track.get_absolute_url())
+
+def update_artist_tags(request,id):
+    artist = get_object_or_404(Artist,id=id)
+    artist.tags = request.POST['tags']
+    artist.save()
+    return HttpResponseRedirect(artist.get_absolute_url())
+
+
 @rendered_with('music/tags.html')
 def tags(request):
     return dict(tags=tagging.models.Tag.objects.all().order_by('name'))
@@ -255,7 +268,8 @@ def tag(request,tag):
         tracks = paginator.page(paginator.num_pages)
 
 
-    return dict(tag=t,tracks=tracks)
+    return dict(tag=t,tracks=tracks,
+                artists=t.items.get_by_model(Artist,[t]).order_by('name'))
 
 def load_ipod(request):
     # TODO: broken with tahoe

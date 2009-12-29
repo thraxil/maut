@@ -4,6 +4,20 @@
 <h1>{{artist.name}}</h1>
 <p><a href="{{artist.lastfm}}">on last.fm</a></p>
 
+<h2>tags</h2>
+
+{% for tag in artist.tags %}
+<a href="/tag/{{tag.name}}/">{{tag.name}}</a>
+{% endfor %}
+
+<form action="tag/" method="post">
+<input type="text" name="tags" 
+       value="{% for tag in artist.tags %}{{tag.name}}{% if not forloop.last%}, {%endif%}{%endfor%}" />
+<input type="submit" value="update tags" />
+</form>
+
+
+
 <table>
 {% for track in artist.track_set.all %}
 

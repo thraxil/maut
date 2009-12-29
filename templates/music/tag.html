@@ -4,6 +4,14 @@
 
 <h2><a href="/tag/">Tag</a>: {{tag.name}}: {{tracks.paginator.count}} tracks</h3>
 
+{% if artists %}
+<ul>Artists
+{% for artist in artists %}
+<li><a href="{{artist.get_absolute_url}}">{{artist.name}}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
 <div class="pagination">
     <span class="step-links">
         {% if tracks.has_previous %}

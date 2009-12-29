@@ -322,6 +322,11 @@ class Artist(models.Model):
         return "/artist/%d/" % self.id
     def lastfm(self):
         return "http://last.fm/music/" + urllib.quote_plus(self.name.encode('utf-8'))
+try:
+    tagging.register(Artist)
+except tagging.AlreadyRegistered:
+    pass
+
 
 class Composer(models.Model):
     name = models.TextField()
