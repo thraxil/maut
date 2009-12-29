@@ -267,6 +267,9 @@ class Genre(models.Model):
     def get_absolute_url(self):
         return "/genre/%d/" % self.id
 
+    def all_others(self):
+        return Genre.objects.all().exclude(id=self.id).order_by("name")
+
 class Year(models.Model):
     name = models.TextField()
     class Meta:

@@ -59,5 +59,13 @@
     </span>
 </div>
 
+<form action="change/" method="post">
+<input type="submit" value="delete this genre and merge into:" />
+<select name="newgenre">
+{% for g in genre.all_others %}
+<option value="{{g.id}}">{{g.name}}</option>
+{% endfor %}
+</select>
 
+</form>
 {% endblock %}

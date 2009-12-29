@@ -218,6 +218,16 @@ def genre(request,genre):
         tracks = paginator.page(paginator.num_pages)
     return dict(genre=g,tracks=tracks)
 
+def merge_genre(request,genre):
+    g = get_object_or_404(Genre,id=genre)
+    ng = get_object_or_404(Genre,id=request.POST['newgenre'])
+
+    for t in g.track_set.all():
+        t.genre = ng
+        t.save()
+    g.delete()
+    return HttpResponseRedirect(ng.get_absolute_url())
+
 def load_ipod(request):
     # TODO: broken with tahoe
     IPOD = "/media/ipod/"
