@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="." method="get">
+
+<p>Rating: 
+
+<label><input type="checkbox" name="rating0" {% if rating0 %}checked="checked" {% endif %} /> 0</label>
+<label><input type="checkbox" name="rating1" {% if rating1 %}checked="checked" {% endif %} /> 1</label>
+<label><input type="checkbox" name="rating2" {% if rating2 %}checked="checked" {% endif %} /> 2</label>
+<label><input type="checkbox" name="rating3" {% if rating3 %}checked="checked" {% endif %} /> 3</label>
+<label><input type="checkbox" name="rating4" {% if rating4 %}checked="checked" {% endif %} /> 4</label>
+<label><input type="checkbox" name="rating5" {% if rating5 %}checked="checked" {% endif %} /> 5</label>
+<label><input type="checkbox" name="rating6" {% if rating6 %}checked="checked" {% endif %} /> 6</label>
+<label><input type="checkbox" name="rating7" {% if rating7 %}checked="checked" {% endif %} /> 7</label>
+<label><input type="checkbox" name="rating8" {% if rating8 %}checked="checked" {% endif %} /> 8</label>
+<label><input type="checkbox" name="rating9" {% if rating9 %}checked="checked" {% endif %} /> 9</label>
+<label><input type="checkbox" name="rating10" {% if rating10 %}checked="checked" {% endif %}/> 10</label>
+</p>
+
+<select name="year" multiple="multiple">
+{% for year in years %}
+<option value="{{year.year.id}}"
+{% if year.isselected %}selected="selected"{% endif %}
+>{{year.year.name}}</option>
+{% endfor %}
+</select><br />
+
+<input type="submit" value="filter" />
+</form>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if tracks.has_previous %}
+            <a href="?page={{ tracks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ tracks.number }} of {{ tracks.paginator.num_pages }}.
+        </span>
+
+        {% if tracks.has_next %}
+            <a href="?page={{ tracks.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+<table>
+<tr>
+<th>track</th>
+<th>artist</th>
+<th>album</th>
+<th>played</th>
+<th>rating</th>
+</tr>
+
+{% for track in tracks.object_list %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"}}</a></td>
+  <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></nobr></td>
+  <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
+  <td><nobr>{% if track.playcounter %}{{track.accessed}}{% else %}never{% endif %}</nobr></td>
+  <td width="260"><nobr><div id="rate-{{track.id}}" class="rating"></div>
+    <script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
+  </td>
+
+</tr>
+{% endfor %}
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if tracks.has_previous %}
+            <a href="?page={{ tracks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ tracks.number }} of {{ tracks.paginator.num_pages }}.
+        </span>
+
+        {% if tracks.has_next %}
+            <a href="?page={{ tracks.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+
+{% endblock %}

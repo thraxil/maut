@@ -234,6 +234,55 @@ def yeartop(request):
         tracks = paginator.page(paginator.num_pages)
     return dict(tracks=tracks)
 
+@rendered_with('music/facet.html')
+def facet(request):
+    # available facets:
+    # year
+    # rating
+
+    alltracks = Track.objects.all()
+    years = request.GET.getlist('year')
+    if len(years) > 0:
+        alltracks = alltracks.filter(year__in=years)
+
+    ratings = []
+    for r in range(11):
+        if request.GET.get("rating%d" % r,''):
+            ratings.append(r)
+    if len(ratings) > 0:
+        alltracks = alltracks.filter(rating__in=ratings)
+
+    paginator = Paginator(alltracks.order_by('artist__name','album__name','track','createdate'), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+
+    allyears = []
+    years = [int(y) for y in years]
+    for year in Year.objects.all().order_by('name'):
+        selected=False
+        if year.id in years:
+            selected=True
+        allyears.append(dict(
+                year=year,
+                isselected=selected
+                ))
+
+    params = dict()
+    for k,v in request.GET.items():
+        params[k] = v
+    params.update(dict(tracks=tracks,
+                years=allyears))
+    return params
+
+
 
 def merge_genre(request,genre):
     g = get_object_or_404(Genre,id=genre)

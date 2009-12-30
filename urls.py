@@ -45,4 +45,5 @@ urlpatterns = patterns('',
                        (r'^tag/(?P<tag>.+)/$','music.views.tag'),
 
                        (r'^yeartop/$','music.views.yeartop'),
+                       (r'^facet/$','music.views.facet'),
 )
