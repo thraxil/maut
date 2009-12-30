@@ -219,6 +219,22 @@ def genre(request,genre):
         tracks = paginator.page(paginator.num_pages)
     return dict(genre=g,tracks=tracks)
 
+@rendered_with('music/yeartop.html')
+def yeartop(request):
+    paginator = Paginator(Track.objects.filter(rating__gt=8,year__name=2009).order_by('artist__name','album__name','track','createdate'), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+    return dict(tracks=tracks)
+
+
 def merge_genre(request,genre):
     g = get_object_or_404(Genre,id=genre)
     ng = get_object_or_404(Genre,id=request.POST['newgenre'])
