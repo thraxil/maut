@@ -401,7 +401,7 @@ class Track(models.Model):
             url = url.replace("./home/anders/MyMusic/","http://behemoth.ccnmtl.columbia.edu/music/")
         if url.startswith("URI:"):
             fname = "file.mp3"
-            if track.filetype != 1:
+            if self.filetype != 1:
                 fname = "file.ogg"
             url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
