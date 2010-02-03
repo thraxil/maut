@@ -16,6 +16,7 @@ import urllib2
 import tagging
 
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
+LOCAL_TAHOE_BASE = "http://localhost:3456/"
 
 def add_track_to_playlist(track):
     url = track.url
@@ -25,7 +26,7 @@ def add_track_to_playlist(track):
         fname = "file.mp3"
         if track.filetype != 1:
             fname = "file.ogg"
-        url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+        url = LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
     else:
         url = url.replace("./home/anders/MyMusic/","")
     command = ["/usr/bin/mpc","add",url]

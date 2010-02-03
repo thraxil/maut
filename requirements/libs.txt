@@ -16,3 +16,4 @@ requirements/src/simplejson-2.0.9.tar.gz
 requirements/src/smartypants-1.6.0.2.tar.gz
 requirements/src/uuid-1.30.tar.gz
 requirements/src/mutagen-1.15.tar.gz
+requirements/src/poster-0.5.tar.gz
