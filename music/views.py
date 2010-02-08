@@ -175,7 +175,7 @@ def queuerandom(request):
     if request.method != "POST":
         return HttpResponse(status=200,content="")
     tracks = random_tracks(50)
-    for track in unrated:
+    for track in tracks:
         add_track_to_playlist(track)
     return HttpResponse(status=200,content="")
 
