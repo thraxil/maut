@@ -14,6 +14,7 @@ from mutagen.flac import FLAC
 import shutil
 import urllib2
 import tagging
+from random import randint
 
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 LOCAL_TAHOE_BASE = "http://localhost:3456/"
@@ -501,6 +502,13 @@ def newest_tracks(limit=20,offset=0):
 def unrated_tracks():
     tracks = Track.objects.filter(rating=0).order_by('artist__name','album__name','track','createdate')
     return tracks
+
+def random_tracks(num=50):
+    tracks = Track.objects.filter(rating__gte=8)
+    cnt = tracks.count()
+    for t in range(num):
+        i = randint(0,cnt)
+        yield tracks[i]
 
 def extract_tahoe_cap(url):
     parts = url.split("/")

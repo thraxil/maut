@@ -170,6 +170,15 @@ def queueunrated(request):
         add_track_to_playlist(track)
     return HttpResponse(status=200,content="")
 
+def queuerandom(request):
+    """ queue up 50 random tracks of rating 8 or better """
+    if request.method != "POST":
+        return HttpResponse(status=200,content="")
+    tracks = random_tracks(50)
+    for track in unrated:
+        add_track_to_playlist(track)
+    return HttpResponse(status=200,content="")
+
 @rendered_with('music/rating.html')
 def rating(request,rating):
     paginator = Paginator(Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate'), 100)
