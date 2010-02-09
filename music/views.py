@@ -94,7 +94,8 @@ def album_playlist(request,id):
 
 def album_m3u(request,id):
     album = get_object_or_404(Album,id=id)
-    return HttpResponse("\r\n".join(album.track_set.all()))
+    return HttpResponse("\r\n".join([track.play() for track in album.track_set.all()]),
+                        mimetype="audio/x-mpegurl")
 
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
