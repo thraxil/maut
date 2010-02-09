@@ -92,6 +92,9 @@ def album_playlist(request,id):
     parts.append("""</trackList></playlist>""")
     return HttpResponse("".join(parts))
 
+def album_m3u(request,id):
+    album = get_object_or_404(Album,id=id)
+    return HttpResponse("\r\n".join(album.track_set.all()))
 
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
