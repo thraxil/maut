@@ -462,6 +462,10 @@ class Track(models.Model):
             
         return url
 
+    def extended_m3u(self):
+        return """#EXTINF:123,%s - %s
+%s""" % (self.artist.name,self.title,self.play())
+
     def ipod_filename(self):
         # TODO: broken with tahoe
         filename = self.url
