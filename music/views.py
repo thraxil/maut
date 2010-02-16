@@ -199,6 +199,12 @@ def rating(request,rating):
 
     return dict(tracks=tracks)
 
+def rating_m3u(request,rating):
+    tracks = Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate')
+    output = "#EXTM3U\r\n" + "\r\n".join([track.extended_m3u() for track in tracks])
+    return HttpResponse(output,mimetype="audio/x-mpegurl")
+
+
 @rendered_with('music/ratings.html')
 def ratings(request):
     data = []
