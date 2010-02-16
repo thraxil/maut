@@ -206,7 +206,8 @@ def rating_m3u(request,rating):
 
 def rating_play_m3u(request,rating):
     tracks = Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate')
-    output = "\r\n".join(["http://music.thraxil.org/track/%d/played/" % track.id for track in tracks])
+    output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
+http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
 def played_track(request,id):
