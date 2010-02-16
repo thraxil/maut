@@ -204,6 +204,15 @@ def rating_m3u(request,rating):
     output = "#EXTM3U\r\n" + "\r\n".join([track.extended_m3u() for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
+def rating_play_m3u(request,rating):
+    tracks = Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate')
+    output = "\r\n".join(["http://music.thraxil.org/track/%d/played/" % track.id for track in tracks])
+    return HttpResponse(output,mimetype="audio/x-mpegurl")
+
+def played(request,id):
+    track = get_object_or_404(Track,id=id)
+    track.played()
+    return HttpResponseRedirect(track.play())
 
 @rendered_with('music/ratings.html')
 def ratings(request):
