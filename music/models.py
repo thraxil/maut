@@ -508,11 +508,8 @@ def unrated_tracks():
     return tracks
 
 def random_tracks(num=50):
-    tracks = Track.objects.filter(rating__gte=8)
-    cnt = tracks.count()
-    for t in range(num):
-        i = randint(0,cnt)
-        yield tracks[i]
+    tracks = Track.objects.filter(rating__gte=8).order_by('?')
+    return tracks[:num]
 
 def extract_tahoe_cap(url):
     parts = url.split("/")
