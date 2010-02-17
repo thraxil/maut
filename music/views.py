@@ -183,6 +183,14 @@ def queuerandom(request):
         add_track_to_playlist(track)
     return HttpResponse(status=200,content="")
 
+def randomplaylist(request):
+    """ playlist of 50 random tracks of rating 8 or better """
+
+    tracks = random_tracks(50)
+    output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
+http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
+    return HttpResponse(output,mimetype="audio/x-mpegurl")
+
 @rendered_with('music/rating.html')
 def rating(request,rating):
     paginator = Paginator(Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate'), 100)
