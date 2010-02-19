@@ -15,6 +15,13 @@ import shutil
 import urllib2
 import tagging
 from random import randint
+import thread
+
+from restclient import GET,POST
+
+from hashlib import md5
+def md5hash(string):
+    return md5(string).hexdigest()
 
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 LOCAL_TAHOE_BASE = "http://localhost:3456/"
@@ -430,7 +437,54 @@ class Track(models.Model):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
         self.playcounter = self.playcounter + 1
         self.accessdate = accessdate
+        self.scrobble()
         self.save()
+
+    def scrobble(self):
+        if self.length < 30:
+            # last.fm doesn't want to know about tracks shorter than
+            # 30 seconds
+            return
+        password = open("/home/anders/.lastfm_password").read().strip()
+        timestamp = int(time.time())
+        auth_token = md5hash(md5hash(password) + str(timestamp))
+        handshake_url = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=%s&t=%d&a=%s" % ("thraxil",timestamp,auth_token)
+        handshake_response = GET(handshake_url)
+        if not handshake_response.startswith("OK"):
+            return # something is wrong
+        (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
+
+        # now playing
+        POST(now_playing_url,
+             params=dict(s=session_id,
+                         a=self.artist.name,
+                         t=self.title,
+                         b=self.album.name,
+                         l=self.length,
+                         n=self.track,
+                         ),
+             )
+
+        # we're supposed to wait 30 seconds or half the length
+        # of the track before actually submitting
+
+        def delayed_scrobble(track,session_id,timestamp,submission_url):
+            delay = min(240,track.length / 2)
+            time.sleep(delay)
+            POST(
+                submission_url,
+                params={'s':session_id,
+                        'a[0]':track.artist.name,
+                        't[0]':track.title,
+                        'b[0]':track.album.name,
+                        'i[0]':timestamp,
+                        'o[0]':'P',
+                        'l[0]':track.length,
+                        'n[0]':track.track
+                    }
+                )
+        thread.start_new_thread(delayed_scrobble,(self,session_id,timestamp,submission_url))
+        
 
     def accessed(self):
         return datetime.datetime.fromtimestamp(self.accessdate)
