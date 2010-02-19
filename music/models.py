@@ -465,12 +465,41 @@ class Track(models.Model):
                          ),
              )
 
+        # r = POST(
+        #     submission_url,
+        #     params={'s':session_id,
+        #             'a[0]':self.artist.name,
+        #             't[0]':self.title,
+        #             'i[0]':timestamp,
+        #             'o[0]':'P',
+        #             'r[0]':'L',
+        #             'b[0]':self.album.name,
+        #             'l[0]':self.length,
+        #             'n[0]':self.track,
+        #             'm[0]':"",
+        #             },
+        #     async=False,
+        #     )
+        # print r
+        # return
+
         # we're supposed to wait 30 seconds or half the length
         # of the track before actually submitting
 
-        def delayed_scrobble(track,session_id,timestamp,submission_url):
+        def delayed_scrobble(track,timestamp):
             delay = min(240,track.length / 2)
             time.sleep(delay)
+
+            # re-handshake
+            password = open("/home/anders/.lastfm_password").read().strip()
+            newtimestamp = int(time.time())
+            auth_token = md5hash(md5hash(password) + str(newtimestamp))
+            handshake_url = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=%s&t=%d&a=%s" % ("thraxil",newtimestamp,auth_token)
+            handshake_response = GET(handshake_url)
+            if not handshake_response.startswith("OK"):
+                return # something is wrong
+            (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
+
             POST(
                 submission_url,
                 params={'s':session_id,
@@ -479,11 +508,13 @@ class Track(models.Model):
                         'b[0]':track.album.name,
                         'i[0]':timestamp,
                         'o[0]':'P',
+                        'r[0]':'L',
+                        'm[0]':"",
                         'l[0]':track.length,
                         'n[0]':track.track
                     }
                 )
-        thread.start_new_thread(delayed_scrobble,(self,session_id,timestamp,submission_url))
+        thread.start_new_thread(delayed_scrobble,(self,timestamp))
         
 
     def accessed(self):
