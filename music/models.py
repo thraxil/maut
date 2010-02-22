@@ -357,6 +357,18 @@ class Setting(models.Model):
 def get_setting(name):
     return Setting.objects.get(name=name).value
 
+def lastfm_handshake():
+    password = open("/home/anders/.lastfm_password").read().strip()
+    timestamp = int(time.time())
+    auth_token = md5hash(md5hash(password) + str(timestamp))
+    handshake_url = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=%s&t=%d&a=%s" % ("thraxil",timestamp,auth_token)
+    handshake_response = GET(handshake_url)
+    if not handshake_response.startswith("OK"):
+        return ("BAD","","","",0)# something is wrong
+    (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
+    return (status,session_id,now_playing_url,submission_url,timestamp)
+
+
 class Track(models.Model):
     url = models.CharField(max_length=256)
     createdate = models.IntegerField()
@@ -445,12 +457,8 @@ class Track(models.Model):
             # last.fm doesn't want to know about tracks shorter than
             # 30 seconds
             return
-        password = open("/home/anders/.lastfm_password").read().strip()
-        timestamp = int(time.time())
-        auth_token = md5hash(md5hash(password) + str(timestamp))
-        handshake_url = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=%s&t=%d&a=%s" % ("thraxil",timestamp,auth_token)
-        handshake_response = GET(handshake_url)
-        if not handshake_response.startswith("OK"):
+        (status,session_id,now_playing_url,submission_url,timestamp) = lastfm_handshake()
+        if status != "OK":
             return # something is wrong
         (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
 
@@ -465,32 +473,15 @@ class Track(models.Model):
                          ),
              )
 
-        # r = POST(
-        #     submission_url,
-        #     params={'s':session_id,
-        #             'a[0]':self.artist.name,
-        #             't[0]':self.title,
-        #             'i[0]':timestamp,
-        #             'o[0]':'P',
-        #             'r[0]':'L',
-        #             'b[0]':self.album.name,
-        #             'l[0]':self.length,
-        #             'n[0]':self.track,
-        #             'm[0]':"",
-        #             },
-        #     async=False,
-        #     )
-        # print r
-        # return
-
-        # we're supposed to wait 30 seconds or half the length
-        # of the track before actually submitting
 
         def delayed_scrobble(track,timestamp):
+            # we're supposed to wait 240 seconds or half the length
+            # of the track before actually submitting
             delay = min(240,track.length / 2)
             time.sleep(delay)
 
-            # re-handshake
+            # just re-handshake since it could've been long enough that the
+            # session expired
             password = open("/home/anders/.lastfm_password").read().strip()
             newtimestamp = int(time.time())
             auth_token = md5hash(md5hash(password) + str(newtimestamp))
