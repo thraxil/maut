@@ -460,7 +460,6 @@ class Track(models.Model):
         (status,session_id,now_playing_url,submission_url,timestamp) = lastfm_handshake()
         if status != "OK":
             return # something is wrong
-        (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
 
         # now playing
         POST(now_playing_url,
