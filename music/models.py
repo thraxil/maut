@@ -518,13 +518,16 @@ class Track(models.Model):
     def is_mp3(self):
         return self.filetype == 1
 
-    def play(self):
+    def play(self,local=False):
         url = self.url.encode('utf-8')
         if url.startswith("URI"):
             fname = "file.mp3"
             if self.filetype != 1:
                 fname = "file.ogg"
-            return TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+            if local:
+                return LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+            else:
+                return TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
 
         parts = url.split('/')
         new_parts = parts[:-1]
