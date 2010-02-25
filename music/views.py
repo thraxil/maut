@@ -97,6 +97,12 @@ def album_m3u(request,id):
     output = "#EXTM3U\r\n" + "\r\n".join([track.extended_m3u() for track in album.track_set.all()])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
+def album_play_m3u(request,id):
+    album = get_object_or_404(Album,id=id)
+    output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
+http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in album.track_set.all()])
+    return HttpResponse(output,mimetype="audio/x-mpegurl")
+
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
     rating = request.POST.get('rating','0')
