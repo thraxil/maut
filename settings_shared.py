@@ -69,7 +69,6 @@ INSTALLED_APPS = (
     'template_utils',
     'typogrify',
     'survey',
-    'tinymce',
     'maut.music',
 )
 
