@@ -171,6 +171,11 @@ def rating_play_m3u(request,rating):
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
+def played_track(request,id):
+    track = get_object_or_404(Track,id=id)
+    track.played()
+    return HttpResponseRedirect(track.play(local=True))
+
 @rendered_with('music/ratings.html')
 def ratings(request):
     data = []
