@@ -26,23 +26,6 @@ def md5hash(string):
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 LOCAL_TAHOE_BASE = "http://localhost:3456/"
 
-def add_track_to_playlist(track):
-    url = track.url
-
-    if url.startswith("URI:"):
-        # play straight from tahoe
-        fname = "file.mp3"
-        if track.filetype != 1:
-            fname = "file.ogg"
-        url = LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
-    else:
-        url = url.replace("./home/anders/MyMusic/","")
-    command = ["/usr/bin/mpc","add",url]
-
-    p = Popen(command,stdout=PIPE,stderr=PIPE)
-    (out,err) = p.communicate()
-
-
 def last_played_track():
     return Track.objects.all().order_by("-accessdate")[0]
 
@@ -116,109 +99,6 @@ def add_track_from_tahoe(cap,filename="",artist="Unknown",
         filetype=int(filetype),
         sampler=sampler,
         bpm=bpm)
-    
-
-def scan_for_new_files(deep=False,new_only=False,start_dir=""):
-    ROOT = os.path.join("/home/anders/MyMusic/",start_dir).encode('utf-8')
-    newest = get_newest_track()
-    for (root,dirs,files) in os.walk(ROOT):
-        if dirs == []:
-            files.sort()
-            for f in files:
-                fl = f.lower()
-                if not fl.endswith('mp3') or fl.endswith('ogg'):
-                    continue
-                if not deep:
-                    # only get ones "newer" than the newest file already in the db
-                    if os.stat(os.path.join(root,f))[ST_MTIME] < newest.modifydate:
-                        continue
-                existing_track = None
-                try:
-                    fname = unicode("." + os.path.join(root,f))
-                except UnicodeDecodeError:
-                    continue
-                try:
-                    existing_track = Track.objects.get(url=fname)
-                    # already exists
-                    if new_only:
-                        continue
-                except Track.DoesNotExist:
-                    pass
-
-                try:
-                    data = get_id3_info_for_file(os.path.join(root,f))
-                    artist = get_or_create_artist(unicode(data.get('TPE1','Unknown')))
-                    title = unicode(data.get('TIT2','Unknown'))
-                    album = get_or_create_album(unicode(data.get('TALB','Unknown')),artist)
-                    year = get_or_create_year(unicode(data.get('TDRC','0000')))
-                    track = unicode(data.get('TRCK','0'))
-                    if '/' in track:
-                        track = track.split('/')[0]
-                    track = int(track)
-                    genre = get_or_create_genre(unicode(data.get('TCON','Unknown')))
-                except UnicodeEncodeError:
-                    continue
-                modifydate = os.stat(os.path.join(root,f))[ST_MTIME]
-                createdate = modifydate
-                composer = Composer.objects.get(name='')
-                comment = ""
-                length = data.info.length
-                samplerate = data.info.sample_rate
-                bitrate = data.info.bitrate
-                filesize = os.stat(os.path.join(root,f))[ST_SIZE]
-                filetype = 1
-                if f.lower().endswith('ogg'):
-                    filetype = 2
-                sampler = False
-                bpm = 0.0
-                discnumber = 0
-                if existing_track is None:
-                    # new track
-                    t = Track.objects.create(
-                        url = "." + os.path.join(root,f),
-                        createdate=int(createdate),
-                        modifydate=int(modifydate),
-                        album=album,
-                        artist=artist,
-                        composer=composer,
-                        genre=genre,
-                        title=title,
-                        year=year,
-                        comment=comment,
-                        track=int(track),
-                        discnumber=int(discnumber),
-                        bitrate=int(bitrate),
-                        length=int(length),
-                        samplerate=int(samplerate),
-                        filesize=int(filesize),
-                        filetype=int(filetype),
-                        sampler=sampler,
-                        bpm=bpm)
-                else:
-                    if not new_only:
-                        # update existing
-                        et = existing_track
-                        et.url = "." + os.path.join(root,f),
-                        et.createdate=int(createdate)
-                        et.modifydate=int(modifydate)
-                        et.album=album
-                        et.artist=artist
-                        et.composer=composer
-                        et.genre=genre
-                        et.title=title
-                        et.year=year
-                        et.comment=comment
-                        et.track=int(track)
-                        et.discnumber=int(discnumber)
-                        et.bitrate=int(bitrate)
-                        et.length=int(length)
-                        et.samplerate=int(samplerate)
-                        et.filesize=int(filesize)
-                        et.filetype=int(filetype)
-                        et.sampler=sampler
-                        et.bpm=bpm
-                        et.save()
-                    
 
 def get_or_create_artist(name):
     r = Artist.objects.filter(name__iexact=unicode(name))
@@ -418,29 +298,19 @@ class Track(models.Model):
 
     def download(self):
         url = self.url
-        if url.startswith("./home/anders/MyMusic/"):
-            url = url.replace("./home/anders/MyMusic/","http://behemoth.ccnmtl.columbia.edu/music/")
-        if url.startswith("URI:"):
-            fname = "file.mp3"
-            if self.filetype != 1:
-                fname = "file.ogg"
-            url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
-        return url
-
-    def relative_path(self):
-        url = self.url
-        if url.startswith("./home/anders/MyMusic/"):
-            url = url.replace("./home/anders/MyMusic/","")
+        fname = "file.mp3"
+        if self.filetype != 1:
+            fname = "file.ogg"
+        url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
 
     def filename(self):
-        if not self.url.startswith("URI:"):
-            return self.url.split('/')[-1]
+        # once it's in tahoe, we don't know the original 
+        # filename
+        if self.filetype == 2:
+            return "file.ogg"
         else:
-            if self.filetype == 2:
-                return "file.ogg"
-            else:
-                return "file.mp3"
+            return "file.mp3"
 
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
@@ -520,55 +390,17 @@ class Track(models.Model):
 
     def play(self,local=False):
         url = self.url.encode('utf-8')
-        if url.startswith("URI"):
-            fname = "file.mp3"
-            if self.filetype != 1:
-                fname = "file.ogg"
-            if local:
-                return LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
-            else:
-                return TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
-
-        parts = url.split('/')
-        new_parts = parts[:-1]
-        new_parts.append(urllib.quote(parts[-1]))
-        url = "/".join(new_parts)
-        username = get_setting('fs_username')
-        password = get_setting('fs_password')
-        if url.startswith("./home/anders/MyMusic/"):
-            url = url.replace("./home/anders/MyMusic/","http://%s:%s@behemoth.ccnmtl.columbia.edu/music/" % (username,password))
-            
-        return url
+        fname = "file.mp3"
+        if self.filetype != 1:
+            fname = "file.ogg"
+        if local:
+            return LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+        else:
+            return TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
 
     def extended_m3u(self):
         return """#EXTINF:123,%s - %s
 %s""" % (self.artist.name,self.title,self.play())
-
-    def ipod_filename(self):
-        # TODO: broken with tahoe
-        filename = self.url
-        filename = filename.replace("./home/anders/MyMusic/","/media/ipod/10/")
-        return filename
-
-    def ipod_dir(self):
-        # TODO: broken with tahoe
-        filename = self.ipod_filename()
-        return "/".join(filename.split("/")[:-1])
-
-    def copy_to_ipod(self):
-        # TODO: broken with ipod
-        try:
-            os.makedirs(self.ipod_dir())
-        except:
-            pass
-        if not os.path.exists(self.ipod_filename()):
-            print "copying to %s" % self.ipod_filename()
-            try:
-                shutil.copyfile(self.url[1:],self.ipod_filename())
-            except IOError:
-                pass
-        else:
-            pass
 
 try:
     tagging.register(Track)
@@ -593,32 +425,6 @@ def extract_tahoe_cap(url):
     parts = url.split("/")
     cap = parts[4].replace("%3A",":")
     return cap
-
-def get_current_playing_track():
-    stdout_buffer = TemporaryFile()
-    stderr_buffer = TemporaryFile()
-
-    p = Popen("/usr/bin/mpc --format '%file%'",bufsize=1,
-              stdout=stdout_buffer,stderr=stderr_buffer,
-              close_fds=True,shell=True)
-    ret = p.wait()
-    stdout_buffer.seek(0)
-    stderr_buffer.seek(0)
-    stdout = stdout_buffer.read()
-    stderr = stderr_buffer.read()
-    stdout_buffer.close()
-    stderr_buffer.close()
-    filename = stdout.split("\n")[0].strip()
-    if not filename.startswith('http://'):
-        full_filename = os.path.join("./home/anders/MyMusic",filename)
-    else:
-        # tahoe url. need to extract the CAP
-        full_filename = extract_tahoe_cap(filename)
-
-    try:
-        return Track.objects.get(url=full_filename)
-    except Track.DoesNotExist:
-        return None
 
 class RelatedArtists(models.Model):
     artist = models.TextField()

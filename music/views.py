@@ -109,19 +109,6 @@ def rate_track(request,id):
     track.rate(rating)
     return HttpResponse("ok")
 
-
-def update(request):
-    if request.method == "POST":
-        track = get_current_playing_track()
-        if track is None:
-            return HttpResponse(status=200,content="")
-        last_played = last_played_track()
-        if track.id != last_played.id:
-            track.played()
-        return HttpResponse(status=200,content="")
-    else:
-        return HttpResponse(status=200,content="")
-
 def rate_current(request,rating):
     if request.method == "POST":
         track = get_current_playing_track()
@@ -131,20 +118,6 @@ def rate_current(request,rating):
         return HttpResponse(status=200,content="")
     else:
         return HttpResponse(status=200,content="")
-
-def updatedb(request):
-    """ scan the music directory looking for new files """
-    if request.method != "POST":
-        return HttpResponse(status=200,content="")
-    scan_for_new_files()
-    return HttpResponse(status=200,content="")
-
-def updatedir(request):
-    """ scan a single directory looking for new files """
-    if request.method != "POST":
-        return HttpResponse(status=200,content="")
-    scan_for_new_files(start_dir=request.POST['dir'],deep=True)
-    return HttpResponse(status=200,content="")
 
 def add_from_tahoe(request):
     if request.method != "POST":
@@ -163,31 +136,6 @@ def add_from_tahoe(request):
                          bitrate=request.POST.get("bitrate","0"),
                          filesize=request.POST.get("filesize","0"))
     return HttpResponse(status=200,content="ok")
-
-def deep_updatedb(request):
-    """ scan the music directory looking for new files """
-    if request.method != "POST":
-        return HttpResponse(status=200,content="")
-    scan_for_new_files(deep=True,new_only=True)
-    return HttpResponse(status=200,content="")
-
-
-def queueunrated(request):
-    if request.method != "POST":
-        return HttpResponse(status=200,content="")
-    unrated = unrated_tracks()
-    for track in unrated:
-        add_track_to_playlist(track)
-    return HttpResponse(status=200,content="")
-
-def queuerandom(request):
-    """ queue up 50 random tracks of rating 8 or better """
-    if request.method != "POST":
-        return HttpResponse(status=200,content="")
-    tracks = random_tracks(50)
-    for track in tracks:
-        add_track_to_playlist(track)
-    return HttpResponse(status=200,content="")
 
 def random_playlist(request):
     """ playlist of 50 random tracks of rating 8 or better """
@@ -222,11 +170,6 @@ def rating_play_m3u(request,rating):
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
-
-def played_track(request,id):
-    track = get_object_or_404(Track,id=id)
-    track.played()
-    return HttpResponseRedirect(track.play(local=True))
 
 @rendered_with('music/ratings.html')
 def ratings(request):
@@ -378,23 +321,3 @@ def tag(request,tag):
     return dict(tag=t,tracks=tracks,
                 artists=t.items.get_by_model(Artist,[t]).order_by('name'))
 
-def load_ipod(request):
-    # TODO: broken with tahoe
-    IPOD = "/media/ipod/"
-    try:
-        os.makedirs(IPOD + "10")
-    except:
-        pass
-    log = []
-    for track in Track.objects.filter(rating=10):
-        track.copy_to_ipod()
-        log.append(track.ipod_filename())
-    random.shuffle(log)
-    playlist = open(IPOD + "10" + "/all.m3u","w")
-    for line in log:
-        try:
-            playlist.write(line + "\n")
-        except UnicodeEncodeError:
-            pass
-    playlist.close()
-    return HttpResponse("ok")
