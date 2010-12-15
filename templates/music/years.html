@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>browse by year</h3>
+
+<table>
+<tr>
+<th>year</th>
+<th># tracks</th>
+</tr>
+
+{% for y in years %}
+<tr class="{% cycle 'even' 'odd' %}">
+  <td><a href="{{y.year.get_absolute_url}}">{{y.year.name}}</a></td>
+  <td><a href="{{y.year.get_absolute_url}}">{{y.count}}</a></td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

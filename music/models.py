@@ -165,6 +165,9 @@ class Year(models.Model):
     class Meta:
         db_table = u'year'
 
+    def get_absolute_url(self):
+        return "/year/%s/" % self.name
+
 class Images(models.Model):
     path = models.TextField()
     artist = models.TextField()

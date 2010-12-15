@@ -209,6 +209,31 @@ def genre(request,genre):
         tracks = paginator.page(paginator.num_pages)
     return dict(genre=g,tracks=tracks)
 
+@rendered_with('music/years.html')
+def years(request):
+    data = []
+    for y in Year.objects.all().order_by('name'):
+        tc = Track.objects.filter(year=y).count()
+        data.append(dict(year=y,count=tc))
+    data.reverse()
+    return dict(years=data)
+
+@rendered_with('music/year.html')
+def year(request,year):
+    y = get_object_or_404(Year,name=year)
+    paginator = Paginator(Track.objects.filter(year=y).order_by('artist__name','album__name','track','createdate'), 100)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        tracks = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        tracks = paginator.page(paginator.num_pages)
+    return dict(year=y,tracks=tracks)
+
 @rendered_with('music/yeartop.html')
 def yeartop(request):
     paginator = Paginator(Track.objects.filter(rating__gt=8,year__name=2009).order_by('artist__name','album__name','track','createdate'), 100)
