@@ -178,7 +178,7 @@ http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,tr
 def played_track(request,id):
     user = User.objects.get(username='anp8')
     track = get_object_or_404(Track,id=id)
-    track.played(request.user)
+    track.played(user)
     return HttpResponseRedirect(track.play(local=True))
 
 @rendered_with('music/ratings.html')
