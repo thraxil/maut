@@ -16,6 +16,7 @@ import urllib2
 import tagging
 from random import randint
 import thread
+from django.contrib.auth.models import User
 
 from restclient import GET,POST
 
@@ -409,6 +410,17 @@ try:
     tagging.register(Track)
 except tagging.AlreadyRegistered:
     pass
+
+class UserRating(models.Model):
+    user = models.ForeignKey(User)
+    track = models.ForeignKey(Track)
+    rating = models.IntegerField(default=0)
+
+class UserPlaycount(models.Model):
+    user = models.ForeignKey(User)
+    track = models.ForeignKey(Track)
+    playcounter = models.IntegerField(default=0)
+    accessdate = models.IntegerField()
 
 def last_tracks(limit=20,offset=0):
     return Track.objects.filter(playcounter__gt=0).order_by("-accessdate")[offset:offset+limit]
