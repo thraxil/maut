@@ -27,8 +27,8 @@ def md5hash(string):
 TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
 LOCAL_TAHOE_BASE = "http://localhost:3456/"
 
-def last_played_track():
-    return Track.objects.all().order_by("-accessdate")[0]
+def last_played_track(user):
+    return Track.objects.filter(userplaycount__user=user).order_by("-userplaycount__accessdate")[0]
 
 def sort_normalize_name(name):
     name = name.lower()
@@ -318,13 +318,17 @@ class Track(models.Model):
 
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
-      
-    def played(self):
+
+    def userplaycount(self,user):
+        return UserPlaycount.objects.get_or_create(user=user,track=self,defaults={'playcount' : 0,
+                                                                                  'accessdate' : 0})[0]
+    def played(user,self):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
-        self.playcounter = self.playcounter + 1
-        self.accessdate = accessdate
+        up = self.userplaycount(user)
+        up.playcounter = up.playcounter + 1
+        up.accessdate = accessdate
+        up.save()
         self.scrobble()
-        self.save()
 
     def scrobble(self):
         if self.length < 30:
@@ -381,8 +385,9 @@ class Track(models.Model):
         thread.start_new_thread(delayed_scrobble,(self,timestamp))
         
 
-    def accessed(self):
-        return datetime.datetime.fromtimestamp(self.accessdate)
+    def accessed(self,user):
+        up = self.userplaycount(user)
+        return datetime.datetime.fromtimestamp(up.accessdate)
 
     def userrating(self,user):
         return UserRating.objects.get_or_create(user=user,track=self,defaults={'rating' : 0})[0]
@@ -425,8 +430,9 @@ class UserPlaycount(models.Model):
     playcounter = models.IntegerField(default=0)
     accessdate = models.IntegerField()
 
-def last_tracks(limit=20,offset=0):
-    return Track.objects.filter(playcounter__gt=0).order_by("-accessdate")[offset:offset+limit]
+def last_tracks(user,limit=20,offset=0):
+    return Track.objects.filter(userplaycount__user=user,
+                                userplaycount__playcounter__gt=0).order_by("-userplaycount__accessdate")[offset:offset+limit]
 
 def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]

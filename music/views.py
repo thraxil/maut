@@ -34,7 +34,7 @@ class rendered_with(object):
 @login_required
 @rendered_with('music/index.html')
 def index(request):
-    return dict(last_tracks=last_tracks(),
+    return dict(last_tracks=last_tracks(request.user),
                 newest_tracks=newest_tracks())
 
 @login_required
@@ -176,7 +176,7 @@ http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,tr
 
 def played_track(request,id):
     track = get_object_or_404(Track,id=id)
-    track.played()
+    track.played(request.user)
     return HttpResponseRedirect(track.play(local=True))
 
 @rendered_with('music/ratings.html')

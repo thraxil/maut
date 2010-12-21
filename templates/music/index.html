@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load rating %}
-
+{% load playcount %}
 {% block content %}
 
 <h2>last 20 tracks played</h3>
@@ -19,7 +19,9 @@
   <td><a href="{{track.get_absolute_url}}">{{track.title|default:"no title"|slice:":50"}}</a></td>
   <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"|slice:":50"}}</a></nobr></td>
   <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"|slice:":50"}}</a></td>
-  <td><nobr>{{track.accessed}}</nobr></td>
+  {% getaccessdate track as accessed %}
+
+  <td><nobr>{{accessed}}</nobr></td>
   {% getrating track as rating %}
   <td width="260"><nobr><div id="rate-latest-{{track.id}}" class="rating"></div>
     <script type="text/javascript">$('#rate-latest-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{rating}}});</script></nobr>

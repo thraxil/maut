@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load rating %}
+{% load playcount %}
 {% block content %}
 <h1><a href="{{track.artist.get_absolute_url}}">{{ track.artist.name }}</a> 
 : 
@@ -25,13 +26,15 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
     <th>createdate</th>
     <td>{{track.created}}</td>
   </tr>
+  {% getplaycount track as playcount %}
+  {% getaccessdate track as accessed %}
 
   <tr>
     <th>played</th>
-    <td>{{ track.playcounter }}
-      time{{track.playcounter|pluralize}} 
-{% if track.playcounter %}(last play:
-      {{track.accessed}}){% endif %}</td>
+    <td>{{ playcount }}
+      time{{playcount|pluralize}} 
+{% if playcount %}(last play:
+      {{accessed}}){% endif %}</td>
   </tr>
 
 {% if track.composer.name %}
