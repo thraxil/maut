@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load rating %}
 {% block content %}
 
 <form action="." method="get">
@@ -61,8 +61,9 @@
   <td><nobr><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></nobr></td>
   <td><a href="{{track.album.get_absolute_url}}">{{track.album.name|default:"Unknown"}}</a></td>
   <td><nobr>{% if track.playcounter %}{{track.accessed}}{% else %}never{% endif %}</nobr></td>
+  {% getrating track as rating %}
   <td width="260"><nobr><div id="rate-{{track.id}}" class="rating"></div>
-    <script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{track.rating}}});</script></nobr>
+    <script type="text/javascript">$('#rate-{{track.id}}').rating('{{track.get_absolute_url}}rate/', {maxvalue:10,curvalue:{{rating}}});</script></nobr>
   </td>
 
 </tr>

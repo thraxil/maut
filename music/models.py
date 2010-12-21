@@ -384,10 +384,13 @@ class Track(models.Model):
     def accessed(self):
         return datetime.datetime.fromtimestamp(self.accessdate)
 
+    def userrating(self,user):
+        return UserRating.objects.get_or_create(user=user,track=self,defaults={'rating' : 0})[0]
 
-    def rate(self,rating):
-        self.rating = int(rating)
-        self.save()
+    def rate(self,user,rating):
+        ur = self.userrating(user)
+        ur.rating = int(rating)
+        ur.save()
 
     def is_mp3(self):
         return self.filetype == 1
@@ -428,12 +431,14 @@ def last_tracks(limit=20,offset=0):
 def newest_tracks(limit=20,offset=0):
     return Track.objects.all().order_by('-createdate')[offset:offset+limit]
 
-def unrated_tracks():
-    tracks = Track.objects.filter(rating=0).order_by('artist__name','album__name','track','createdate')
+def unrated_tracks(user):
+    tracks = Track.objects.filter(userrating__user=user,
+                                  userrating__rating=0).order_by('artist__name','album__name','track','createdate')
     return tracks
 
-def random_tracks(num=50):
-    tracks = Track.objects.filter(rating__gte=8).order_by('?')
+def random_tracks(user,num=50):
+    tracks = Track.objects.filter(userrating__user=user,
+                                  userrating__rating__gte=8).order_by('?')
     return tracks[:num]
 
 def extract_tahoe_cap(url):

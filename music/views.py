@@ -106,7 +106,7 @@ http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,tr
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
     rating = request.POST.get('rating','0')
-    track.rate(rating)
+    track.rate(request.user,rating)
     return HttpResponse("ok")
 
 def rate_current(request,rating):
@@ -114,7 +114,7 @@ def rate_current(request,rating):
         track = get_current_playing_track()
         if track is None:
             return HttpResponse(status=200,content="")
-        track.rate(rating)
+        track.rate(request.user,rating)
         return HttpResponse(status=200,content="")
     else:
         return HttpResponse(status=200,content="")
@@ -139,14 +139,15 @@ def add_from_tahoe(request):
 
 def random_playlist(request):
     """ playlist of 50 random tracks of rating 8 or better """
-    tracks = list(random_tracks(50))
+    tracks = list(random_tracks(request.user,50))
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
 @rendered_with('music/rating.html')
 def rating(request,rating):
-    paginator = Paginator(Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate'), 100)
+    paginator = Paginator(Track.objects.filter(userrating__user=request.user,
+                                               userrating__rating=rating).order_by('artist__name','album__name','track','createdate'), 100)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -161,12 +162,14 @@ def rating(request,rating):
     return dict(tracks=tracks)
 
 def rating_m3u(request,rating):
-    tracks = Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate')
+    tracks = Track.objects.filter(userrating__user=request.user,
+                                  userrating__rating=rating).order_by('artist__name','album__name','track','createdate')
     output = "#EXTM3U\r\n" + "\r\n".join([track.extended_m3u() for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
 def rating_play_m3u(request,rating):
-    tracks = Track.objects.filter(rating=rating).order_by('artist__name','album__name','track','createdate')
+    tracks = Track.objects.filter(userrating__user=request.user,
+                                  userrating__rating=rating).order_by('artist__name','album__name','track','createdate')
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
@@ -180,7 +183,8 @@ def played_track(request,id):
 def ratings(request):
     data = []
     for r in range(11):
-        tc = Track.objects.filter(rating=r).count()
+        tc = Track.objects.filter(userrating__user=request.user,
+                                  userrating__rating=r).count()
         data.append(dict(rating=r,count=tc))
     data.reverse()
     return dict(ratings=data)
@@ -236,7 +240,8 @@ def year(request,year):
 
 @rendered_with('music/yeartop.html')
 def yeartop(request):
-    paginator = Paginator(Track.objects.filter(rating__gt=8,year__name=2009).order_by('artist__name','album__name','track','createdate'), 100)
+    paginator = Paginator(Track.objects.filter(userrating__user=request.user,
+                                               userrating__rating__gt=8,year__name=2009).order_by('artist__name','album__name','track','createdate'), 100)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -265,7 +270,8 @@ def facet(request):
         if request.GET.get("rating%d" % r,''):
             ratings.append(r)
     if len(ratings) > 0:
-        alltracks = alltracks.filter(rating__in=ratings)
+        alltracks = alltracks.filter(userrating__user=request.user,
+                                     userrating__rating__in=ratings)
 
     paginator = Paginator(alltracks.order_by('artist__name','album__name','track','createdate'), 100)
 
