@@ -322,7 +322,7 @@ class Track(models.Model):
         return datetime.datetime.fromtimestamp(self.createdate)
 
     def userplaycount(self,user):
-        return UserPlaycount.objects.get_or_create(user=user,track=self,defaults={'playcount' : 0,
+        return UserPlaycount.objects.get_or_create(user=user,track=self,defaults={'playcounter' : 0,
                                                                                   'accessdate' : 0})[0]
     def played(self,user):
         accessdate = int(time.mktime(datetime.datetime.now().timetuple()))
