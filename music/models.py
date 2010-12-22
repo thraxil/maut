@@ -100,6 +100,11 @@ def add_track_from_tahoe(cap,filename="",artist="Unknown",
         filetype=int(filetype),
         sampler=sampler,
         bpm=bpm)
+    for u in User.objects.all():
+        # make rating/playcount objects for each user
+        # this isn't going to scale well with many users :(
+        ur = t.userrating(u)
+        up = t.userplaycount(u)
 
 def get_or_create_artist(name):
     r = Artist.objects.filter(name__iexact=unicode(name))
@@ -256,7 +261,6 @@ def lastfm_handshake():
 class Track(models.Model):
     url = models.CharField(max_length=256)
     createdate = models.IntegerField()
-    accessdate = models.IntegerField()
     modifydate = models.IntegerField()
     album = models.ForeignKey(Album,db_column="album")
     artist = models.ForeignKey(Artist,db_column="artist")
@@ -274,8 +278,6 @@ class Track(models.Model):
     filetype = models.IntegerField()
     sampler = models.BooleanField()
     bpm = models.FloatField()
-    rating = models.IntegerField(default=0)
-    playcounter = models.IntegerField(default=0)
 
     class Meta:
         db_table = u'tags'
