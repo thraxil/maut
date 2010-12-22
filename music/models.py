@@ -71,6 +71,7 @@ def add_track_from_tahoe(cap,filename="",artist="Unknown",
         track = track.split('/')[0]
         track = int(track)
     genre = get_or_create_genre(genre)
+    modifydate = int(time.mktime(datetime.datetime.now().timetuple()))
     createdate = modifydate
     composer = Composer.objects.get(name='')
     comment = ""

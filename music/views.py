@@ -127,7 +127,6 @@ def add_from_tahoe(request):
                          album=request.POST['album'],
                          title=request.POST['title'],
                          filename=request.POST.get("filename",""),
-                         modifydate=request.POST.get("modifydate",""), 
                          year=request.POST.get('year','0000'),
                          track=request.POST.get('track','0'),
                          genre=request.POST.get('genre','Unknown'),
