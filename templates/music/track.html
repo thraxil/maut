@@ -50,8 +50,8 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
   </tr>
 
   <tr>
-    <th>year</th>
-    <td>{{track.year.name}}</td>
+    <th><a href="/year/">year</a></th>
+    <td><a href="{{track.year.get_absolute_url}}">{{track.year.name}}</a></td>
   </tr>
 
 {% if track.comment %}
