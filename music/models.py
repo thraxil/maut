@@ -173,7 +173,11 @@ class Year(models.Model):
         db_table = u'year'
 
     def get_absolute_url(self):
-        return "/year/%s/" % self.name
+        return "/year/%d/" % self.id
+
+    def all_others(self):
+        return Year.objects.all().exclude(id=self.id).order_by("name")
+
 
 class Images(models.Model):
     path = models.TextField()

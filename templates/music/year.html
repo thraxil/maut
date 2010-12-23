@@ -64,5 +64,15 @@
     </span>
 </div>
 
+<form action="change/" method="post">
+{% csrf_token %} 
+<input type="submit" value="delete this year and merge into:" />
+<select name="newyear">
+{% for g in year.all_others %}
+<option value="{{g.id}}">{{g.name}}</option>
+{% endfor %}
+</select>
+
+</form>
 
 {% endblock %}

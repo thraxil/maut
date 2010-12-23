@@ -225,7 +225,7 @@ def years(request):
 
 @rendered_with('music/year.html')
 def year(request,year):
-    y = get_object_or_404(Year,name=year)
+    y = get_object_or_404(Year,id=year)
     paginator = Paginator(Track.objects.filter(year=y).order_by('artist__name','album__name','track','createdate'), 100)
 
     try:
@@ -312,6 +312,16 @@ def merge_genre(request,genre):
 
     for t in g.track_set.all():
         t.genre = ng
+        t.save()
+    g.delete()
+    return HttpResponseRedirect(ng.get_absolute_url())
+
+def merge_year(request,year):
+    g = get_object_or_404(Year,id=year)
+    ng = get_object_or_404(Year,id=request.POST['newyear'])
+
+    for t in g.track_set.all():
+        t.year = ng
         t.save()
     g.delete()
     return HttpResponseRedirect(ng.get_absolute_url())

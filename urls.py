@@ -43,7 +43,8 @@ urlpatterns = patterns('',
                        (r'^tag/(?P<tag>.+)/$','music.views.tag'),
 
                        (r'^year/$','music.views.years'),
-                       (r'^year/(?P<year>.+)/$','music.views.year'),
+                       (r'^year/(?P<year>\d+)/$','music.views.year'),
+                       (r'^year/(?P<year>\d+)/change/$','music.views.merge_year'),
 
                        (r'^yeartop/$','music.views.yeartop'),
                        (r'^facet/$','music.views.facet'),
