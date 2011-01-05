@@ -48,4 +48,8 @@ urlpatterns = patterns('',
 
                        (r'^yeartop/$','music.views.yeartop'),
                        (r'^facet/$','music.views.facet'),
+
+                       (r'stats/track_count/$','music.views.track_count'),
+                       (r'stats/hourly_plays/(?P<username>\w+)/$','music.views.hourly_plays'),
+                       (r'stats/unrated_count/(?P<username>\w+)/$','music.views.unrated_count'),
 )

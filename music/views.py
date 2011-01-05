@@ -368,3 +368,44 @@ def tag(request,tag):
     return dict(tag=t,tracks=tracks,
                 artists=t.items.get_by_model(Artist,[t]).order_by('name'))
 
+
+class munin(object):
+    def __init__(self,config=""):
+        self.config = config
+
+    def __call__(self, func):
+        def rendered_func(request, *args, **kwargs):
+            tuples = func(request, *args, **kwargs)
+            if 'autoconfig' in request.GET:
+                return HttpResponse("yes")
+            if 'config' in request.GET:
+                rows = ["%s.label %s" % (t[0].replace(" ","_"),t[0]) for t in tuples]
+                return HttpResponse("\n".join([self.config] + rows))
+            if type(tuples) == type([]):
+                rows = ["%s %s" % (t[0].replace(" ","_"),str(t[1])) for t in tuples]
+                return HttpResponse("\n".join(rows))
+            else:
+                return tuples
+        return rendered_func
+
+@munin(config="""graph_title Track Count
+graph_vlabel tracks
+graph_category Music""")
+def track_count(request):
+    return [("tracks",Track.objects.count())]
+
+@munin(config="""graph_title Hourly Play Count
+graph_vlabel plays
+graph_category Music""")
+def hourly_plays(request,username):
+    u = get_object_or_404(User,username=username)
+    hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
+    accessdate = int(time.mktime(hour_ago.timetuple()))
+    return [("plays",UserPlaycount.objects.filter(user=u,accessdate__gt=accessdate).count())]
+
+@munin(config="""graph_title Unrated Tracks
+graph_vlabel tracks
+graph_category Music""")
+def unrated_count(request,username):
+    u = get_object_or_404(User,username=username)
+    return [("tracks",UserRating.objects.filter(user=u,rating=0).count())]
