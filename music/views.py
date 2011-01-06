@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 import random
 import os
 import tagging
+from django.db.models import Sum
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -409,3 +410,10 @@ graph_category Music""")
 def unrated_count(request,username):
     u = get_object_or_404(User,username=username)
     return [("tracks",UserRating.objects.filter(user=u,rating=0).count())]
+
+@munin(config="""graph_title Total Plays
+graph_vlabel plays
+graph_category Music""")
+def total_plays(request,username):
+    u = get_object_or_404(User,username=username)
+    return [("tracks",UserPlaycount.objects.filter(user=u).aggregate(Sum("playcounter"))['playcounter__sum'])]
