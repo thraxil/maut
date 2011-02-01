@@ -10,6 +10,7 @@ urlpatterns = patterns('',
                        # Example:
                        # (r'^maut/', include('maut.foo.urls')),
                        ('^accounts/',include('djangowind.urls')),
+                       ('^munin/',include('munin.urls')),
                        (r'^admin/(.*)', admin.site.root),
                        (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': site_media_root}),
                        (r'^uploads/(?P<path>.*)$','django.views.static.serve',{'document_root' : settings.MEDIA_ROOT}),
