@@ -68,7 +68,6 @@ INSTALLED_APPS = (
     'smartif',
     'template_utils',
     'typogrify',
-    'munin',
     'maut.music',
 )
 
