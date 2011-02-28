@@ -16,16 +16,20 @@ data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
 
 
 <table style="width:100%" class="playlisttable">
+<thead><tr><th></th><th>Track</th><th>Artist/Album</th><th>Notes</th></tr></thead>
+<tbody>
 {% for pt in playlist.playlisttrack_set.all %}
 <tr class="{% cycle 'odd' 'even' %}">
 <th valign="top">{{forloop.counter}}</th>
-<th valign="top"><b>{{pt.track.title}}</b><br />
+<th valign="top"><b>{{pt.track.title}}</b></th>
+<th>
  <nobr><i>by <a href="{{pt.track.artist.get_absolute_url}}">{{pt.track.artist.name}}</a></i></nobr><br />
  <nobr>album: <a href="{{pt.track.album.get_absolute_url}}">{{pt.track.album.name}}</a></nobr>
 </th>
 <td valign="top">{{pt.note|markdown}}</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 
 {% else %}
