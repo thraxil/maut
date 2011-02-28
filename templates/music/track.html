@@ -126,6 +126,34 @@ data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
 
     </td>
 
+{% if user_playlists %}
+<tr>
+  <th>Add To Playlist</th>
+  <td>
+    <form action="add_to_playlist/" method="post">
+      <table>
+	<tr>
+	  <td valign="top"><select name="playlist">
+	      <option value="">Select Playlist</option>
+	      <option value="">---------------</option>
+	      {% for playlist in user_playlists %}
+	      <option value="{{playlist.id}}">{{playlist.name}}</option>
+	      {% endfor %}
+	    </select>
+	  </td>
+	  <td>
+	    <textarea rows="3" cols="50" name="note"></textarea>
+	  </td>
+	  <td>
+	    <input type="submit" value="submit"/>
+	  </td>
+	</tr>
+      </table>
+    </form>
+  </td>
+</tr>
+{% endif %}
+
 </table>
 
 

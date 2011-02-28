@@ -64,7 +64,35 @@ def album(request,id):
 @rendered_with('music/track.html')
 def track(request,id):
     track = get_object_or_404(Track,id=id)
-    return dict(track=track)
+    return dict(track=track,
+                user_playlists=Playlist.objects.filter(owner=request.user))
+
+@login_required
+def add_track_to_playlist(request,id):
+    track = get_object_or_404(Track,id=id)
+    if request.method == "POST":
+        playlist = get_object_or_404(Playlist,id=request.POST['playlist'])
+        pt = PlaylistTrack.objects.create(playlist=playlist,track=track,
+                                          note=request.POST.get('note',''))
+    return HttpResponseRedirect(track.get_absolute_url())
+
+
+def playlist_playlist(request,id):
+    playlist = get_object_or_404(Playlist,id=id)
+    parts = ["""<?xml version="1.0" encoding="UTF-8"?>
+    <playlist version="0" xmlns = "http://xspf.org/ns/0/">
+    <trackList>"""]
+    for pt in playlist.playlisttrack_set.all():
+        if not pt.track.filetype == 1:
+            continue
+        parts.append("""<track>
+        <location>%s</location>
+        <annotation>%s [%s]</annotation>
+        </track>""" % (pt.track.play(),pt.track.title,pt.track.artist.name))
+
+    parts.append("""</trackList></playlist>""")
+    return HttpResponse("".join(parts))
+
 
 def track_playlist(self,id):
     track = get_object_or_404(Track,id=id)
@@ -373,6 +401,27 @@ def tag(request,tag):
 
     return dict(tag=t,tracks=tracks,
                 artists=t.items.get_by_model(Artist,[t]).order_by('name'))
+
+@login_required
+@rendered_with('music/playlist_index.html')
+def playlist_index(request):
+    return dict(your_playlists=Playlist.objects.filter(owner=request.user),
+                all_playlists=Playlist.objects.all())
+
+@login_required
+def create_playlist(request):
+    if request.POST:
+        name = request.POST.get('name','unnamed playlist')
+        description = request.POST.get('description','')
+        owner = request.user
+        playlist = Playlist.objects.create(name=name,owner=owner,description=description)
+    return HttpResponseRedirect("/playlist/")
+
+@login_required
+@rendered_with('music/playlist.html')
+def playlist(request,id):
+    playlist = get_object_or_404(Playlist,id=id)
+    return dict(playlist=playlist)
 
 @muninview(config="""graph_title Track Count
 graph_vlabel tracks

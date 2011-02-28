@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if your_playlists.count %}
+<h2>Your Playlists</h2>
+
+<ul>
+{% for playlist in your_playlists %}
+<li><a href="{{playlist.get_absolute_url}}">{{playlist.name}}</a></li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+{% if all_playlists.count %}
+<h2>All Playlists</h2>
+
+<ul>
+{% for playlist in all_playlists %}
+<li>[{{playlist.owner.first_name}}] <a href="{{playlist.get_absolute_url}}">{{playlist.name}}</a></li>
+{% endfor %}
+</ul>
+
+{% else %}
+<p>No playlists</p>
+{% endif %}
+
+<form action="create/" method="post">
+<h2>Create a new Playlist</h2>
+<p><b>Name</b><br />
+<input type="text" name="name" /><br />
+<b>Description</b><br />
+<textarea name="description" cols="70" rows="10"></textarea><br />
+
+
+<input type="submit" value="create" />
+</form>
+
+{% endblock %}

@@ -437,6 +437,24 @@ class UserPlaycount(models.Model):
     playcounter = models.IntegerField(default=0)
     accessdate = models.IntegerField()
 
+class Playlist(models.Model):
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey(User)
+    description = models.TextField(default="",blank=True,null=True)
+
+    def get_absolute_url(self):
+        return "/playlist/%d/" % self.id
+
+
+class PlaylistTrack(models.Model):
+    playlist = models.ForeignKey(Playlist)
+    track = models.ForeignKey(Track)
+    note = models.TextField(default="",blank=True,null=True)
+    
+    class Meta:
+        order_with_respect_to = 'playlist'
+
+
 def last_tracks(user,limit=20,offset=0):
     return Track.objects.filter(userplaycount__user=user,
                                 userplaycount__playcounter__gt=0).order_by("-userplaycount__accessdate")[offset:offset+limit]
