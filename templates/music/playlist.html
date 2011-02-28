@@ -6,13 +6,15 @@
 <p><i>by {{playlist.owner.first_name}}</i></p>
 {{playlist.description|markdown}}
 
+
+
+{% if playlist.playlisttrack_set.count %}
 <object type="application/x-shockwave-flash" width="400" height="170"
 data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
 <param name="movie" value="/site_media/swf/xspf_player.swf?playlist_url=playlist/" />
 </object>
 
 
-{% if playlist.playlisttrack_set.count %}
 <table style="width:100%" class="playlisttable">
 {% for pt in playlist.playlisttrack_set.all %}
 <tr class="{% cycle 'odd' 'even' %}">
