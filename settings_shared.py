@@ -5,7 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('CCNMTL', 'ccnmtl-sysadmin@columbia.edu'),
+    ('CCNMTL', 'anders@columbia.edu'),
 )
 
 MANAGERS = ADMINS
@@ -75,7 +75,7 @@ INSTALLED_APPS = (
 THUMBNAIL_SUBDIR = "thumbs"
 EMAIL_SUBJECT_PREFIX = "[maut] "
 EMAIL_HOST = 'localhost'
-SERVER_EMAIL = "maut@ccnmtl.columbia.edu"
+SERVER_EMAIL = "maut@thraxil.org"
 
 # WIND settings
 
