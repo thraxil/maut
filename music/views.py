@@ -133,12 +133,14 @@ def album_play_m3u(request,id):
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in album.track_set.all()])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
+@login_required
 def rate_track(request,id):
     track = get_object_or_404(Track,id=id)
     rating = request.POST.get('rating','0')
     track.rate(request.user,rating)
     return HttpResponse("ok")
 
+@login_required
 def rate_current(request,rating):
     if request.method == "POST":
         track = get_current_playing_track()
@@ -177,6 +179,7 @@ def random_playlist(request):
 http://music.thraxil.org/track/%d/played/""" % (track.artist.name,track.title,track.id) for track in tracks])
     return HttpResponse(output,mimetype="audio/x-mpegurl")
 
+@login_required
 @rendered_with('music/rating.html')
 def rating(request,rating):
     paginator = Paginator(Track.objects.filter(userrating__user=request.user,
@@ -194,6 +197,7 @@ def rating(request,rating):
 
     return dict(tracks=tracks)
 
+@login_required
 def rating_m3u(request,rating):
     tracks = Track.objects.filter(userrating__user=request.user,
                                   userrating__rating=rating).order_by('artist__name','album__name','track','createdate')
@@ -214,6 +218,7 @@ def played_track(request,id):
     track.played(user)
     return HttpResponseRedirect(track.play(local=True))
 
+@login_required
 @rendered_with('music/ratings.html')
 def ratings(request):
     data = []
@@ -224,6 +229,7 @@ def ratings(request):
     data.reverse()
     return dict(ratings=data)
 
+@login_required
 @rendered_with('music/genres.html')
 def genres(request):
     data = []
@@ -232,6 +238,7 @@ def genres(request):
         data.append(dict(genre=g,count=tc))
     return dict(genres=data)
 
+@login_required
 @rendered_with('music/genre.html')
 def genre(request,genre):
     g = get_object_or_404(Genre,id=genre)
@@ -248,6 +255,7 @@ def genre(request,genre):
         tracks = paginator.page(paginator.num_pages)
     return dict(genre=g,tracks=tracks)
 
+@login_required
 @rendered_with('music/years.html')
 def years(request):
     data = []
@@ -257,6 +265,7 @@ def years(request):
     data.reverse()
     return dict(years=data)
 
+@login_required
 @rendered_with('music/year.html')
 def year(request,year):
     y = get_object_or_404(Year,id=year)
@@ -273,6 +282,7 @@ def year(request,year):
         tracks = paginator.page(paginator.num_pages)
     return dict(year=y,tracks=tracks)
 
+@login_required
 @rendered_with('music/yeartop.html')
 def yeartop(request):
     paginator = Paginator(Track.objects.filter(userrating__user=request.user,
@@ -289,6 +299,7 @@ def yeartop(request):
         tracks = paginator.page(paginator.num_pages)
     return dict(tracks=tracks)
 
+@login_required
 @rendered_with('music/facet.html')
 def facet(request):
     # available facets:
@@ -339,7 +350,7 @@ def facet(request):
     return params
 
 
-
+@login_required
 def merge_genre(request,genre):
     g = get_object_or_404(Genre,id=genre)
     ng = get_object_or_404(Genre,id=request.POST['newgenre'])
@@ -350,6 +361,7 @@ def merge_genre(request,genre):
     g.delete()
     return HttpResponseRedirect(ng.get_absolute_url())
 
+@login_required
 def merge_year(request,year):
     g = get_object_or_404(Year,id=year)
     ng = get_object_or_404(Year,id=request.POST['newyear'])
@@ -360,29 +372,33 @@ def merge_year(request,year):
     g.delete()
     return HttpResponseRedirect(ng.get_absolute_url())
 
+@login_required
 def update_track_tags(request,id):
     track = get_object_or_404(Track,id=id)
     track.tags = request.POST['tags']
     track.save()
     return HttpResponseRedirect(track.get_absolute_url())
 
+@login_required
 def track_tagup(request,id,tag):
     track = get_object_or_404(Track,id=id)
     t = get_object_or_404(tagging.models.Tag,name=tag)
     tagging.models.Tag.objects.add_tag(track.artist,"\"%s\"" % t.name)
     return HttpResponseRedirect(track.get_absolute_url())
 
+@login_required
 def update_artist_tags(request,id):
     artist = get_object_or_404(Artist,id=id)
     artist.tags = request.POST['tags']
     artist.save()
     return HttpResponseRedirect(artist.get_absolute_url())
 
-
+@login_required
 @rendered_with('music/tags.html')
 def tags(request):
     return dict(tags=tagging.models.Tag.objects.all().order_by('name'))
 
+@login_required
 @rendered_with('music/tag.html')
 def tag(request,tag):
     t = get_object_or_404(tagging.models.Tag,name=tag)
