@@ -256,7 +256,10 @@ def lastfm_handshake():
     timestamp = int(time.time())
     auth_token = md5hash(md5hash(password) + str(timestamp))
     handshake_url = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=tst&v=1.0&u=%s&t=%d&a=%s" % ("thraxil",timestamp,auth_token)
-    handshake_response = GET(handshake_url)
+    try:
+        handshake_response = GET(handshake_url)
+    except:
+        return ("BAD","","","",0) # not responding
     if not handshake_response.startswith("OK"):
         return ("BAD","","","",0)# something is wrong
     (status,session_id,now_playing_url,submission_url,_blah) = handshake_response.split("\n")
