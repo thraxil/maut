@@ -2,7 +2,7 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
-from datetime import datetime
+from datetime import datetime, timedelta
 from models import Artist, Album, Track, Playlist, PlaylistTrack
 from models import User, Genre, Year, UserPlaycount, UserRating
 from models import add_track_from_tahoe
@@ -504,7 +504,7 @@ graph_vlabel plays
 graph_category Music""")
 def hourly_plays(request, username):
     u = get_object_or_404(User, username=username)
-    hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
+    hour_ago = datetime.now() - timedelta(hours=1)
     accessdate = int(time.mktime(hour_ago.timetuple()))
     return [("plays", UserPlaycount.objects.filter(
                 user=u, accessdate__gt=accessdate).count())]
