@@ -22,7 +22,7 @@ class rendered_with(object):
     def __call__(self, func):
         def rendered_func(request, *args, **kwargs):
             items = func(request, *args, **kwargs)
-            if isinstance(items) == dict:
+            if isinstance(items, dict):
                 return render_to_response(
                     self.template_name,
                     items, context_instance=RequestContext(request))
