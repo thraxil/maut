@@ -18,4 +18,3 @@ requirements/src/uuid-1.30.tar.gz
 requirements/src/mutagen-1.15.tar.gz
 requirements/src/poster-0.5.tar.gz
 requirements/src/psycopg2-2.4-no-mx.tar.gz
-requirements/src/Imaging-1.1.7.tar.gz
