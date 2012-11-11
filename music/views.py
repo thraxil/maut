@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from datetime import datetime
 from models import Artist, Album, Track, Playlist, PlaylistTrack
 from models import User, Genre, Year, UserPlaycount, UserRating
-from models import get_current_playing_track, add_track_from_tahoe
+from models import add_track_from_tahoe
 from models import last_tracks, newest_tracks, full_search
 from models import random_tracks
 from django.core.paginator import Paginator
@@ -151,18 +151,6 @@ def rate_track(request, id):
     rating = request.POST.get('rating', '0')
     track.rate(request.user, rating)
     return HttpResponse("ok")
-
-
-@login_required
-def rate_current(request, rating):
-    if request.method == "POST":
-        track = get_current_playing_track()
-        if track is None:
-            return HttpResponse(status=200, content="")
-        track.rate(request.user, rating)
-        return HttpResponse(status=200, content="")
-    else:
-        return HttpResponse(status=200, content="")
 
 
 def add_from_tahoe(request):
