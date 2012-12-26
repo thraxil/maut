@@ -333,7 +333,7 @@ def yeartop(request):
     paginator = Paginator(
         Track.objects.filter(
             userrating__user=request.user,
-            userrating__rating__gt=8, year__name=2009
+            userrating__rating__gt=8, year__name=2012
             ).order_by(
             'artist__name', 'album__name', 'track', 'createdate'), 100)
 
