@@ -505,6 +505,14 @@ def playlist(request, id):
     return dict(playlist=playlist)
 
 
+@login_required
+def remove_track_from_playlist(request, id):
+    pt = get_object_or_404(PlaylistTrack, id=id)
+    playlist = pt.playlist
+    pt.delete()
+    return HttpResponseRedirect(playlist.get_absolute_url())
+
+
 @muninview(config="""graph_title Track Count
 graph_vlabel tracks
 graph_category Music""")
