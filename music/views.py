@@ -60,7 +60,8 @@ def artist(request, id):
 @rendered_with('music/album.html')
 def album(request, id):
     album = get_object_or_404(Album, id=id)
-    return dict(album=album)
+    return dict(album=album,
+                user_playlists=Playlist.objects.filter(owner=request.user))
 
 
 @login_required
@@ -79,6 +80,18 @@ def add_track_to_playlist(request, id):
         PlaylistTrack.objects.create(playlist=playlist, track=track,
                                      note=request.POST.get('note', ''))
     return HttpResponseRedirect(track.get_absolute_url())
+
+
+@login_required
+def add_album_to_playlist(request, id):
+    album = get_object_or_404(Album, id=id)
+
+    if request.method == "POST":
+        playlist = get_object_or_404(Playlist, id=request.POST['playlist'])
+        for track in album.track_set.all():
+            PlaylistTrack.objects.create(playlist=playlist, track=track,
+                                         note=request.POST.get('note', ''))
+    return HttpResponseRedirect(album.get_absolute_url())
 
 
 def playlist_playlist(request, id):
