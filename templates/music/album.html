@@ -31,10 +31,10 @@ data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
 
   {% for track in album.track_set.all %}
   <tr class="{% cycle 'even' 'odd' %}">
-    <td>{{track.track}}</td>
-    <td>{{track.title}}</td>
+    <td><a href="{{track.get_absolute_url}}">{{track.track}}</a></td>
+    <td><a href="{{track.get_absolute_url}}">{{track.title}}</a></td>
     {% if not artist %}
-    <td>{{track.artist.name|default:"Unknown"}}</td>
+    <td><a href="{{track.artist.get_absolute_url}}">{{track.artist.name|default:"Unknown"}}</a></td>
     {% endif %}
   {% getplaycount track as playcount %}
   {% getaccessdate track as accessed %}
