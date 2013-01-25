@@ -13,6 +13,8 @@ import tagging
 from django.db.models import Sum
 from munin.helpers import muninview
 import time
+import csv
+from cStringIO import StringIO
 
 
 class rendered_with(object):
@@ -218,6 +220,30 @@ def rating(request, rating):
         tracks = paginator.page(paginator.num_pages)
 
     return dict(tracks=tracks)
+
+
+def rating_csv(request, rating):
+    user = User.objects.get(username='anp8')
+    r = Track.objects.filter(
+        userrating__user=user,
+        userrating__rating=rating)
+    s = StringIO()
+    csv_output = csv.writer(s)
+#    csv_output.writeheader(["url","artist","album","track","title"])
+    for t in r:
+        csv_output.writerow(
+            [
+                t.play(local=True),
+                t.artist.name.encode('utf-8'),
+                t.album.name.encode('utf-8'),
+                t.track,
+                t.title.encode('utf-8')
+                ])
+
+    response = HttpResponse(s.getvalue(), mimetype="text/csv")
+    response["Content-Disposition"] = "attachment; filename=rating%d.csv" % int(rating)
+    return response
+        
 
 
 @login_required
