@@ -3,3 +3,4 @@ local_settings.py
 ve
 distribute*.tar.gz
 *~
+.coverage

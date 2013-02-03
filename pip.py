@@ -251,7 +251,6 @@ class Command(object):
             if options.verbose > 0:
                 # The logger isn't setup yet
                 print 'Running in environment %s' % options.venv
-                print "Site packages %s" % str(options.site_packages)
             site_packages=False
             if options.site_packages:
                 site_packages=True
