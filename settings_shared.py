@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'munin',
     'maut.music',
     'django_nose',
+    'south',
 )
 
 THUMBNAIL_SUBDIR = "thumbs"
