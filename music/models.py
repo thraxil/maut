@@ -335,7 +335,7 @@ class Scrobbler(object):
             handshake_url = (
                 "http://post.audioscrobbler.com/?hs=true&p=1.2&"
                 "c=tst&v=1.0&u=%s&t=%d&a=%s") % (
-                "thraxil", newtimestamp, auth_token)
+                    "thraxil", newtimestamp, auth_token)
             handshake_response = GET(handshake_url)
             if not handshake_response.startswith("OK"):
                 return  # something is wrong
@@ -344,18 +344,19 @@ class Scrobbler(object):
 
             POST(
                 submission_url,
-                params={'s': session_id,
-                        'a[0]': track.artist.name,
-                        't[0]': track.title,
-                        'b[0]': track.album.name,
-                        'i[0]': timestamp,
-                        'o[0]': 'P',
-                        'r[0]': 'L',
-                        'm[0]': "",
-                        'l[0]': track.length,
-                        'n[0]': track.track
-                    }
-                )
+                params={
+                    's': session_id,
+                    'a[0]': track.artist.name,
+                    't[0]': track.title,
+                    'b[0]': track.album.name,
+                    'i[0]': timestamp,
+                    'o[0]': 'P',
+                    'r[0]': 'L',
+                    'm[0]': "",
+                    'l[0]': track.length,
+                    'n[0]': track.track
+                }
+            )
         thread.start_new_thread(delayed_scrobble, (self.track, timestamp))
 
 
@@ -512,7 +513,7 @@ def last_tracks(user, limit=20, offset=0):
     return Track.objects.filter(
         userplaycount__user=user,
         userplaycount__playcounter__gt=0
-        ).order_by("-userplaycount__accessdate")[offset:offset + limit]
+    ).order_by("-userplaycount__accessdate")[offset:offset + limit]
 
 
 def newest_tracks(limit=20, offset=0):
@@ -523,7 +524,7 @@ def unrated_tracks(user):
     tracks = Track.objects.filter(
         userrating__user=user,
         userrating__rating=0
-        ).order_by('artist__name', 'album__name', 'track', 'createdate')
+    ).order_by('artist__name', 'album__name', 'track', 'createdate')
     return tracks
 
 

@@ -155,8 +155,8 @@ def album_play_m3u(request, id):
     output = "#EXTM3U\r\n" + "\r\n".join(
         ["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (
-                track.artist.name, track.title, track.id
-                ) for track in album.track_set.all()])
+        track.artist.name, track.title, track.id
+    ) for track in album.track_set.all()])
     return HttpResponse(output, mimetype="audio/x-mpegurl")
 
 
@@ -195,19 +195,20 @@ def random_playlist(request):
     tracks = list(random_tracks(user, 50))
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (
-                track.artist.name, track.title, track.id
-                ) for track in tracks])
+        track.artist.name, track.title, track.id
+    ) for track in tracks])
     return HttpResponse(output, mimetype="audio/x-mpegurl")
 
 
 @login_required
 @rendered_with('music/rating.html')
 def rating(request, rating):
-    paginator = Paginator(Track.objects.filter(
+    paginator = Paginator(
+        Track.objects.filter(
             userrating__user=request.user,
             userrating__rating=rating).order_by(
-            'artist__name', 'album__name', 'track', 'createdate'),
-                          100)
+                'artist__name', 'album__name', 'track', 'createdate'),
+        100)
 
     try:
         page = int(request.GET.get('page',  '1'))
@@ -238,12 +239,12 @@ def rating_csv(request, rating):
                 t.album.name.encode('utf-8'),
                 t.track,
                 t.title.encode('utf-8')
-                ])
+            ])
 
     response = HttpResponse(s.getvalue(), mimetype="text/csv")
-    response["Content-Disposition"] = "attachment; filename=rating%d.csv" % int(rating)
+    response["Content-Disposition"] = (
+        "attachment; filename=rating%d.csv" % int(rating))
     return response
-        
 
 
 @login_required
@@ -251,10 +252,10 @@ def rating_m3u(request, rating):
     tracks = Track.objects.filter(
         userrating__user=request.user,
         userrating__rating=rating).order_by(
-        'artist__name', 'album__name', 'track', 'createdate')
+            'artist__name', 'album__name', 'track', 'createdate')
     output = "#EXTM3U\r\n" + "\r\n".join(
         [track.extended_m3u() for track in tracks]
-        )
+    )
     return HttpResponse(output, mimetype="audio/x-mpegurl")
 
 
@@ -263,11 +264,11 @@ def rating_play_m3u(request, rating):
     tracks = Track.objects.filter(
         userrating__user=user,
         userrating__rating=rating).order_by(
-        'artist__name', 'album__name', 'track', 'createdate')
+            'artist__name', 'album__name', 'track', 'createdate')
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
 http://music.thraxil.org/track/%d/played/""" % (
-                track.artist.name, track.title, track.id
-                ) for track in tracks])
+        track.artist.name, track.title, track.id
+    ) for track in tracks])
     return HttpResponse(output, mimetype="audio/x-mpegurl")
 
 
@@ -307,7 +308,7 @@ def genre(request, genre):
     paginator = Paginator(
         Track.objects.filter(genre=g).order_by(
             'artist__name', 'album__name', 'track', 'createdate'
-            ), 100)
+        ), 100)
 
     try:
         page = int(request.GET.get('page',  '1'))
@@ -339,7 +340,7 @@ def year(request, year):
     paginator = Paginator(
         Track.objects.filter(year=y).order_by(
             'artist__name', 'album__name', 'track', 'createdate'
-            ), 100)
+        ), 100)
 
     try:
         page = int(request.GET.get('page',  '1'))
@@ -360,7 +361,7 @@ def yeartop(request):
         Track.objects.filter(
             userrating__user=request.user,
             userrating__rating__gt=8, year__name=2012
-            ).order_by(
+        ).order_by(
             'artist__name', 'album__name', 'track', 'createdate'), 100)
 
     try:
@@ -416,15 +417,16 @@ def facet(request):
         if year.id in years:
             selected = True
         allyears.append(dict(
-                year=year,
-                isselected=selected
-                ))
+            year=year,
+            isselected=selected))
 
     params = dict()
     for k, v in request.GET.items():
         params[k] = v
-    params.update(dict(tracks=tracks,
-                years=allyears))
+    params.update(
+        dict(
+            tracks=tracks,
+            years=allyears))
     return params
 
 
@@ -489,8 +491,8 @@ def tag(request, tag):
     paginator = Paginator(
         t.items.get_by_model(
             Track, [t]
-            ).order_by('artist__name', 'album__name',
-                       'track', 'createdate'), 100)
+        ).order_by('artist__name', 'album__name',
+                   'track', 'createdate'), 100)
 
     try:
         page = int(request.GET.get('page',  '1'))
@@ -553,8 +555,9 @@ def hourly_plays(request, username):
     u = get_object_or_404(User, username=username)
     hour_ago = datetime.now() - timedelta(hours=1)
     accessdate = int(time.mktime(hour_ago.timetuple()))
-    return [("plays", UserPlaycount.objects.filter(
-                user=u, accessdate__gt=accessdate).count())]
+    return [("plays",
+             UserPlaycount.objects.filter(
+                 user=u, accessdate__gt=accessdate).count())]
 
 
 @muninview(config="""graph_title Unrated Tracks
@@ -572,5 +575,5 @@ def total_plays(request, username):
     u = get_object_or_404(User, username=username)
     return [("tracks",
              UserPlaycount.objects.filter(
-                user=u
-                ).aggregate(Sum("playcounter"))['playcounter__sum'])]
+                 user=u
+             ).aggregate(Sum("playcounter"))['playcounter__sum'])]

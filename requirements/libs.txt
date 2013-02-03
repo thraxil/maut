@@ -10,7 +10,6 @@ requirements/src/restclient-0.11.0.tar.gz
 requirements/src/feedparser-4.1.tar.gz
 requirements/src/imageuploader-0.1.tar.gz
 requirements/src/Markdown-2.0.tar.gz
-# anders modified this to remove the stupid ez_setup requirement from setup.py
 requirements/src/pyenchant-1.5.1.tar.gz 
 requirements/src/simplejson-2.0.9.tar.gz
 requirements/src/smartypants-1.6.0.2.tar.gz
@@ -20,3 +19,6 @@ requirements/src/poster-0.5.tar.gz
 requirements/src/psycopg2-2.4-no-mx.tar.gz
 requirements/src/nose-1.1.2.tar.gz
 requirements/src/coverage-3.5.3.tar.gz
+requirements/src/pep8-1.4.tar.gz
+requirements/src/pyflakes-0.5.0.tar.gz
+requirements/src/flake8-1.7.0.tar.gz
