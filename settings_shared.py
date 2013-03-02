@@ -125,3 +125,5 @@ TINYMCE_DEFAULT_CONFIG = {'cols': 80,
                           'plugins':'table,spellchecker,paste,searchreplace',
                           'theme' : 'simple',
                           }
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_HTTPONLY = True
