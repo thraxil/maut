@@ -93,6 +93,7 @@ INSTALLED_APPS = (
     'maut.music',
     'django_nose',
     'south',
+    'django_statsd',
 )
 
 THUMBNAIL_SUBDIR = "thumbs"
@@ -127,3 +128,9 @@ TINYMCE_DEFAULT_CONFIG = {'cols': 80,
                           }
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_HTTPONLY = True
+
+STATSD_CLIENT = 'statsd.client'
+STATSD_PREFIX = 'maut'
+STATSD_HOST = '127.0.0.1'
+STATSD_PORT = 8125
+STATSD_PATCHES = ['django_statsd.patches.db', ]
