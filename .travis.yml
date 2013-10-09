@@ -4,5 +4,5 @@ python:
 install:
   - ./bootstrap.py
 script:
-  - ./ve/bin/flake8 music
+  - ./ve/bin/flake8 maut
   - ./manage.py test
