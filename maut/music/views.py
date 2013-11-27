@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 from datetime import datetime, timedelta
 from models import Artist, Album, Track, Playlist, PlaylistTrack
@@ -50,21 +51,21 @@ class IndexView(LoggedInMixin, TemplateView):
                     newest_tracks=newest_tracks())
 
 
-@login_required
-@rendered_with('music/search.html')
-def search(request):
-    q = request.GET.get('q', '')
-    if len(q) < 3:
-        return HttpResponseRedirect("/")
-    (tracks, artists, albums) = full_search(q)
-    return dict(tracks=tracks, artists=artists, albums=albums)
+class SearchView(LoggedInMixin, TemplateView):
+    template_name = 'music/search.html'
+
+    def get_context_data(self):
+        q = self.request.GET.get('q', '')
+        if len(q) < 3:
+            return HttpResponseRedirect("/")
+        (tracks, artists, albums) = full_search(q)
+        return dict(tracks=tracks, artists=artists, albums=albums)
 
 
-@login_required
-@rendered_with('music/artist.html')
-def artist(request, id):
-    artist = get_object_or_404(Artist, id=id)
-    return dict(artist=artist)
+class ArtistView(LoggedInMixin, DetailView):
+    template_name = 'music/artist.html'
+    model = Artist
+    context_object_name = 'artist'
 
 
 @login_required

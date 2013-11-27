@@ -14,8 +14,8 @@ urlpatterns = patterns(
      {'document_root': settings.MEDIA_ROOT}),
 
     (r'^$', views.IndexView.as_view()),
-    (r'^search/$', 'maut.music.views.search'),
-    (r'^artist/(?P<id>\d+)/$', 'maut.music.views.artist'),
+    (r'^search/$', views.SearchView.as_view()),
+    (r'^artist/(?P<pk>\d+)/$', views.ArtistView.as_view()),
     (r'^artist/(?P<id>\d+)/tag/$', 'maut.music.views.update_artist_tags'),
     (r'^album/(?P<id>\d+)/$', 'maut.music.views.album'),
     (r'^album/(?P<id>\d+)/playlist/$', 'maut.music.views.album_playlist'),
