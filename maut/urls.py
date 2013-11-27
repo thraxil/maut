@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 from django.conf import settings
+import maut.music.views as views
 admin.autodiscover()
 
 urlpatterns = patterns(
@@ -12,7 +13,7 @@ urlpatterns = patterns(
      'django.views.static.serve',
      {'document_root': settings.MEDIA_ROOT}),
 
-    (r'^$', 'maut.music.views.index'),
+    (r'^$', views.IndexView.as_view()),
     (r'^search/$', 'maut.music.views.search'),
     (r'^artist/(?P<id>\d+)/$', 'maut.music.views.artist'),
     (r'^artist/(?P<id>\d+)/tag/$', 'maut.music.views.update_artist_tags'),

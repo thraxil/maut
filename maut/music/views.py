@@ -2,6 +2,8 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
+from django.views.generic.base import TemplateView
+from django.utils.decorators import method_decorator
 from datetime import datetime, timedelta
 from models import Artist, Album, Track, Playlist, PlaylistTrack
 from models import User, Genre, Year, UserPlaycount, UserRating
@@ -34,11 +36,18 @@ class rendered_with(object):
         return rendered_func
 
 
-@login_required
-@rendered_with('music/index.html')
-def index(request):
-    return dict(last_tracks=last_tracks(request.user),
-                newest_tracks=newest_tracks())
+class LoggedInMixin(object):
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoggedInMixin, self).dispatch(*args, **kwargs)
+
+
+class IndexView(LoggedInMixin, TemplateView):
+    template_name = 'music/index.html'
+
+    def get_context_data(self):
+        return dict(last_tracks=last_tracks(self.request.user),
+                    newest_tracks=newest_tracks())
 
 
 @login_required
