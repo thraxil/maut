@@ -70,6 +70,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 STATIC_ROOT = os.path.join(os.path.dirname(__file__), "../media")
+STATIC_URL = "/media/"
 STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
