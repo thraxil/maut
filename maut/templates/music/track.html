@@ -9,8 +9,8 @@
 
 {% if track.is_mp3 %}
 <object type="application/x-shockwave-flash" width="400" height="30"
-data="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/">
-<param name="movie" value="/site_media/swf/xspf_player_slim.swf?playlist_url=playlist/" />
+data="{{STATIC_URL}}swf/xspf_player_slim.swf?playlist_url=playlist/">
+<param name="movie" value="{{STATIC_URL}}swf/xspf_player_slim.swf?playlist_url=playlist/" />
 </object>
 {% else %}
 <p>sorry, only mp3s can be played in the browser currently</p>

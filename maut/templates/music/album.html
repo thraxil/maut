@@ -12,8 +12,8 @@
 
 {% if not album.all_ogg %}
 <object type="application/x-shockwave-flash" width="400" height="170"
-data="/site_media/swf/xspf_player.swf?playlist_url=playlist/">
-<param name="movie" value="/site_media/swf/xspf_player.swf?playlist_url=playlist/" />
+data="{{STATIC_URL}}swf/xspf_player.swf?playlist_url=playlist/">
+<param name="movie" value="{{STATIC_URL}}swf/xspf_player.swf?playlist_url=playlist/" />
 </object>
 {% endif %}
 

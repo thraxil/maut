@@ -1,19 +1,13 @@
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 from django.conf import settings
-import os.path
 admin.autodiscover()
-
-site_media_root = os.path.join(os.path.dirname(__file__), "../media")
 
 urlpatterns = patterns(
     '',
     ('^accounts/', include('djangowind.urls')),
     ('^munin/', include('munin.urls')),
     (r'^admin/', include(admin.site.urls)),
-    (r'^site_media/(?P<path>.*)$',
-     'django.views.static.serve',
-     {'document_root': site_media_root}),
     (r'^uploads/(?P<path>.*)$',
      'django.views.static.serve',
      {'document_root': settings.MEDIA_ROOT}),
