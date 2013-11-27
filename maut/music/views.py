@@ -517,11 +517,14 @@ def tag(request, tag):
                 artists=t.items.get_by_model(Artist, [t]).order_by('name'))
 
 
-@login_required
-@rendered_with('music/playlist_index.html')
-def playlist_index(request):
-    return dict(your_playlists=Playlist.objects.filter(owner=request.user),
-                all_playlists=Playlist.objects.all())
+class PlaylistIndexView(LoggedInMixin, TemplateView):
+    template_name = 'music/playlist_index.html'
+
+    def get_context_data(self):
+        return dict(
+            your_playlists=Playlist.objects.filter(
+                owner=self.request.user),
+            all_playlists=Playlist.objects.all())
 
 
 @login_required

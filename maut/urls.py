@@ -51,7 +51,7 @@ urlpatterns = patterns(
     (r'^year/(?P<year>\d+)/$', 'maut.music.views.year'),
     (r'^year/(?P<year>\d+)/change/$', 'maut.music.views.merge_year'),
 
-    (r'^playlist/$', 'maut.music.views.playlist_index'),
+    (r'^playlist/$', views.PlaylistIndexView.as_view()),
     (r'^playlist/create/$', 'maut.music.views.create_playlist'),
     (r'^playlist/(?P<id>\d+)/$', 'maut.music.views.playlist'),
     (r'^playlist/(?P<id>\d+)/playlist/$',
