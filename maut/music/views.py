@@ -372,6 +372,13 @@ def build_ratings(get):
     return ratings
 
 
+def get_page(request):
+    try:
+        return int(request.GET.get('page', '1'))
+    except ValueError:
+        return 1
+
+
 @login_required
 @render_to('music/facet.html')
 def facet(request):
@@ -392,11 +399,7 @@ def facet(request):
     paginator = Paginator(
         alltracks.order_by(
             'artist__name', 'album__name', 'track', 'createdate'), 100)
-
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
+    page = get_page(request)
 
     try:
         tracks = paginator.page(page)
