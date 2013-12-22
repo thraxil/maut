@@ -386,6 +386,19 @@ def get_tracks(paginator, page):
         return paginator.page(paginator.num_pages)
 
 
+def get_allyears(years):
+    allyears = []
+    years = [int(y) for y in years]
+    for year in Year.objects.all().order_by('name'):
+        selected = False
+        if year.id in years:
+            selected = True
+        allyears.append(dict(
+            year=year,
+            isselected=selected))
+    return allyears
+
+
 @login_required
 @render_to('music/facet.html')
 def facet(request):
@@ -408,15 +421,7 @@ def facet(request):
             'artist__name', 'album__name', 'track', 'createdate'), 100)
     page = get_page(request)
     tracks = get_tracks(paginator, page)
-    allyears = []
-    years = [int(y) for y in years]
-    for year in Year.objects.all().order_by('name'):
-        selected = False
-        if year.id in years:
-            selected = True
-        allyears.append(dict(
-            year=year,
-            isselected=selected))
+    allyears = get_allyears(years)
 
     params = dict()
     for k, v in request.GET.items():
