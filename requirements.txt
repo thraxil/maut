@@ -26,7 +26,6 @@ djangowind==0.11.0
 django-tagging==0.3
 template_utils==0.4p2
 typogrify==1.0
-django-munin==0.1.1
 django-nose==1.2
 South==0.8.1
 django-statsd-mozilla==0.3.8.7

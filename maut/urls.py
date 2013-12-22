@@ -7,7 +7,6 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     ('^accounts/', include('djangowind.urls')),
-    ('^munin/', include('munin.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^uploads/(?P<path>.*)$',
      'django.views.static.serve',
@@ -61,11 +60,4 @@ urlpatterns = patterns(
 
     (r'^yeartop/$', 'maut.music.views.yeartop'),
     (r'^facet/$', 'maut.music.views.facet'),
-
-    (r'stats/track_count/$', 'maut.music.views.track_count'),
-    (r'stats/hourly_plays/(?P<username>\w+)/$',
-     'maut.music.views.hourly_plays'),
-    (r'stats/unrated_count/(?P<username>\w+)/$',
-     'maut.music.views.unrated_count'),
-    (r'stats/total_plays/(?P<username>\w+)/$', 'maut.music.views.total_plays'),
 )

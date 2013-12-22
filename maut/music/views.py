@@ -13,7 +13,6 @@ from models import random_tracks
 from django.core.paginator import Paginator
 import tagging
 from django.db.models import Sum
-from munin.helpers import muninview
 import time
 import csv
 from cStringIO import StringIO
@@ -535,41 +534,3 @@ def remove_track_from_playlist(request, id):
     playlist = pt.playlist
     pt.delete()
     return HttpResponseRedirect(playlist.get_absolute_url())
-
-
-@muninview(config="""graph_title Track Count
-graph_vlabel tracks
-graph_category Music""")
-def track_count(request):
-    return [("tracks", Track.objects.count())]
-
-
-@muninview(config="""graph_title Hourly Play Count
-graph_vlabel plays
-graph_category Music""")
-def hourly_plays(request, username):
-    u = get_object_or_404(User, username=username)
-    hour_ago = datetime.now() - timedelta(hours=1)
-    accessdate = int(time.mktime(hour_ago.timetuple()))
-    return [("plays",
-             UserPlaycount.objects.filter(
-                 user=u, accessdate__gt=accessdate).count())]
-
-
-@muninview(config="""graph_title Unrated Tracks
-graph_vlabel tracks
-graph_category Music""")
-def unrated_count(request, username):
-    u = get_object_or_404(User, username=username)
-    return [("tracks", UserRating.objects.filter(user=u, rating=0).count())]
-
-
-@muninview(config="""graph_title Total Plays
-graph_vlabel plays
-graph_category Music""")
-def total_plays(request, username):
-    u = get_object_or_404(User, username=username)
-    return [("tracks",
-             UserPlaycount.objects.filter(
-                 user=u
-             ).aggregate(Sum("playcounter"))['playcounter__sum'])]
