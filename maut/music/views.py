@@ -1,7 +1,6 @@
-from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
@@ -18,23 +17,7 @@ from munin.helpers import muninview
 import time
 import csv
 from cStringIO import StringIO
-
-
-class rendered_with(object):
-    def __init__(self, template_name):
-        self.template_name = template_name
-
-    def __call__(self, func):
-        def rendered_func(request, *args, **kwargs):
-            items = func(request, *args, **kwargs)
-            if isinstance(items, dict):
-                return render_to_response(
-                    self.template_name,
-                    items, context_instance=RequestContext(request))
-            else:
-                return items
-
-        return rendered_func
+from annoying.decorators import render_to
 
 
 class LoggedInMixin(object):
@@ -69,7 +52,7 @@ class ArtistView(LoggedInMixin, DetailView):
 
 
 @login_required
-@rendered_with('music/album.html')
+@render_to('music/album.html')
 def album(request, id):
     album = get_object_or_404(Album, id=id)
     return dict(album=album,
@@ -77,7 +60,7 @@ def album(request, id):
 
 
 @login_required
-@rendered_with('music/track.html')
+@render_to('music/track.html')
 def track(request, id):
     track = get_object_or_404(Track, id=id)
     return dict(track=track,
@@ -211,7 +194,7 @@ http://music.thraxil.org/track/%d/played/""" % (
 
 
 @login_required
-@rendered_with('music/rating.html')
+@render_to('music/rating.html')
 def rating(request, rating):
     paginator = Paginator(
         Track.objects.filter(
@@ -290,7 +273,7 @@ def played_track(request, id):
 
 
 @login_required
-@rendered_with('music/ratings.html')
+@render_to('music/ratings.html')
 def ratings(request):
     data = []
     for r in range(11):
@@ -302,7 +285,7 @@ def ratings(request):
 
 
 @login_required
-@rendered_with('music/genres.html')
+@render_to('music/genres.html')
 def genres(request):
     data = []
     for g in Genre.objects.all().order_by('name'):
@@ -312,7 +295,7 @@ def genres(request):
 
 
 @login_required
-@rendered_with('music/genre.html')
+@render_to('music/genre.html')
 def genre(request, genre):
     g = get_object_or_404(Genre, id=genre)
     paginator = Paginator(
@@ -333,7 +316,7 @@ def genre(request, genre):
 
 
 @login_required
-@rendered_with('music/years.html')
+@render_to('music/years.html')
 def years(request):
     data = []
     for y in Year.objects.all().order_by('name'):
@@ -344,7 +327,7 @@ def years(request):
 
 
 @login_required
-@rendered_with('music/year.html')
+@render_to('music/year.html')
 def year(request, year):
     y = get_object_or_404(Year, id=year)
     paginator = Paginator(
@@ -365,7 +348,7 @@ def year(request, year):
 
 
 @login_required
-@rendered_with('music/yeartop.html')
+@render_to('music/yeartop.html')
 def yeartop(request):
     paginator = Paginator(
         Track.objects.filter(
@@ -387,7 +370,7 @@ def yeartop(request):
 
 
 @login_required
-@rendered_with('music/facet.html')
+@render_to('music/facet.html')
 def facet(request):
     # available facets:
     # year
@@ -489,13 +472,13 @@ def update_artist_tags(request, id):
 
 
 @login_required
-@rendered_with('music/tags.html')
+@render_to('music/tags.html')
 def tags(request):
     return dict(tags=tagging.models.Tag.objects.all().order_by('name'))
 
 
 @login_required
-@rendered_with('music/tag.html')
+@render_to('music/tag.html')
 def tag(request, tag):
     t = get_object_or_404(tagging.models.Tag, name=tag)
     paginator = Paginator(
@@ -540,7 +523,7 @@ def create_playlist(request):
 
 
 @login_required
-@rendered_with('music/playlist.html')
+@render_to('music/playlist.html')
 def playlist(request, id):
     playlist = get_object_or_404(Playlist, id=id)
     return dict(playlist=playlist)
