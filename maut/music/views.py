@@ -4,16 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
-from datetime import datetime, timedelta
 from models import Artist, Album, Track, Playlist, PlaylistTrack
-from models import User, Genre, Year, UserPlaycount, UserRating
+from models import User, Genre, Year
 from models import add_track_from_tahoe
 from models import last_tracks, newest_tracks, full_search
 from models import random_tracks
 from django.core.paginator import Paginator
 import tagging
-from django.db.models import Sum
-import time
 import csv
 from cStringIO import StringIO
 from annoying.decorators import render_to
@@ -222,7 +219,6 @@ def rating_csv(request, rating):
         userrating__rating=rating)
     s = StringIO()
     csv_output = csv.writer(s)
-#    csv_output.writeheader(["url","artist","album","track","title"])
     for t in r:
         csv_output.writerow(
             [
@@ -368,6 +364,14 @@ def yeartop(request):
     return dict(tracks=tracks)
 
 
+def build_ratings(get):
+    ratings = []
+    for r in range(11):
+        if get.get("rating%d" % r, ''):
+            ratings.append(r)
+    return ratings
+
+
 @login_required
 @render_to('music/facet.html')
 def facet(request):
@@ -380,10 +384,7 @@ def facet(request):
     if len(years) > 0:
         alltracks = alltracks.filter(year__in=years)
 
-    ratings = []
-    for r in range(11):
-        if request.GET.get("rating%d" % r, ''):
-            ratings.append(r)
+    ratings = build_ratings(request.GET)
     if len(ratings) > 0:
         alltracks = alltracks.filter(userrating__user=request.user,
                                      userrating__rating__in=ratings)
