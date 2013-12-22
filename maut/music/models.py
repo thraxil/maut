@@ -51,6 +51,12 @@ def get_newest_track():
     return Track.objects.all().order_by("-modifydate")[0]
 
 
+def filetype_from_extension(filename):
+    if filename.lower().endswith('ogg'):
+        return 2
+    return 1
+
+
 def add_track_from_tahoe(cap, filename="", artist="Unknown",
                          album="Unknown", title="Unknown",
                          modifydate=None,  year='0000',
@@ -74,9 +80,7 @@ def add_track_from_tahoe(cap, filename="", artist="Unknown",
     createdate = modifydate
     composer = Composer.objects.get(name='')
     comment = ""
-    filetype = 1
-    if filename.lower().endswith('ogg'):
-        filetype = 2
+    filetype = filetype_from_extension(filename)
     sampler = False
     bpm = 0.0
     discnumber = 0
