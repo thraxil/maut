@@ -538,12 +538,3 @@ def extract_tahoe_cap(url):
     parts = url.split("/")
     cap = parts[4].replace("%3A", ":")
     return cap
-
-
-class RelatedArtists(models.Model):
-    artist = models.TextField()
-    suggestion = models.TextField()
-    changedate = models.IntegerField()
-
-    class Meta:
-        db_table = u'related_artists'
