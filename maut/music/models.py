@@ -135,6 +135,18 @@ def get_or_create_year(name):
         return r[0]
 
 
+def find_or_create_album_by_artist(qs, name, artist):
+    for album in qs:
+        for track in album.track_set.all():
+            if track.artist.id == artist.id:
+                # good enough
+                return album
+        else:
+            # no matches, so we make a fresh one
+            # FIXME: doesn't deal well with compilations :(
+            return Album.objects.create(name=name)
+
+
 def get_or_create_album(name, artist):
     r = Album.objects.filter(name__iexact=unicode(name))
     if r.count() == 0:
@@ -142,15 +154,7 @@ def get_or_create_album(name, artist):
     else:
         # we need to make sure it's an album that's associated
         # with this artist
-        for album in r:
-            for track in album.track_set.all():
-                if track.artist.id == artist.id:
-                    # good enough
-                    return album
-            else:
-                # no matches, so we make a fresh one
-                # FIXME: doesn't deal well with compilations :(
-                return Album.objects.create(name=name)
+        return find_or_create_album_by_artist(r, name, artist)
 
 
 def get_id3_info_for_file(file):
