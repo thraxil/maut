@@ -104,11 +104,15 @@ def add_track_from_tahoe(cap, filename="", artist="Unknown",
         filetype=int(filetype),
         sampler=sampler,
         bpm=bpm)
+    init_track_for_all_users(t)
+
+
+def init_track_for_all_users(track):
     for u in User.objects.all():
         # make rating/playcount objects for each user
         # this isn't going to scale well with many users :(
-        t.userrating(u)
-        t.userplaycount(u)
+        track.userrating(u)
+        track.userplaycount(u)
 
 
 def get_or_create_artist(name):
