@@ -547,14 +547,3 @@ class RelatedArtists(models.Model):
 
     class Meta:
         db_table = u'related_artists'
-
-
-# not sure what these are for
-class Amazon(models.Model):
-    asin = models.TextField()
-    locale = models.TextField()
-    filename = models.TextField()
-    refetchdate = models.IntegerField()
-
-    class Meta:
-        db_table = u'amazon'
