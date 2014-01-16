@@ -1,12 +1,13 @@
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 from django.conf import settings
+import django.contrib.auth.urls
 import maut.music.views as views
 admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    ('^accounts/', include('djangowind.urls')),
+    (r'^accounts/', include(django.contrib.auth.urls)),
     (r'^admin/', include(admin.site.urls)),
     (r'^uploads/(?P<path>.*)$',
      'django.views.static.serve',

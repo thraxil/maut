@@ -72,7 +72,7 @@ MIDDLEWARE_CLASSES = (
 STATIC_URL = "/media/"
 STATIC_ROOT = ""
 STATICFILES_DIRS = (
-    os.path.join(os.path.dirname(__file__), "../media"))
+    os.path.join(os.path.dirname(__file__), "../media"), )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -110,21 +110,6 @@ THUMBNAIL_SUBDIR = "thumbs"
 EMAIL_SUBJECT_PREFIX = "[maut] "
 EMAIL_HOST = 'localhost'
 SERVER_EMAIL = "maut@thraxil.org"
-
-# WIND settings
-
-AUTHENTICATION_BACKENDS = (
-    'djangowind.auth.WindAuthBackend',
-    'django.contrib.auth.backends.ModelBackend',)
-WIND_BASE = "https://wind.columbia.edu/"
-WIND_SERVICE = "cnmtl_full_np"
-WIND_PROFILE_HANDLERS = ['djangowind.auth.CDAPProfileHandler']
-WIND_AFFIL_HANDLERS = [
-    'djangowind.auth.AffilGroupMapper',
-    'djangowind.auth.StaffMapper',
-    'djangowind.auth.SuperuserMapper']
-WIND_STAFF_MAPPER_GROUPS = ['tlc.cunix.local:columbia.edu']
-WIND_SUPERUSER_MAPPER_GROUPS = ['anp8']
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_HTTPONLY = True

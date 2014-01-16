@@ -22,7 +22,6 @@ flake8==1.7.0
 statsd==2.0.2
 gunicorn==0.17.4
 django-smartif==0.1
-djangowind==0.11.0
 django-tagging==0.3
 template_utils==0.4p2
 typogrify==1.0
