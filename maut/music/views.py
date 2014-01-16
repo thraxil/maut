@@ -178,7 +178,7 @@ def add_from_tahoe(request):
 def random_playlist(request):
     """ playlist of 50 random tracks of rating 8 or better """
     if request.user.is_anonymous():
-        user = get_object_or_404(User, username='anp8')
+        user = get_object_or_404(User, username='anders')
     else:
         user = request.user
     tracks = list(random_tracks(user, 50))
@@ -213,7 +213,7 @@ def rating(request, rating):
 
 
 def rating_csv(request, rating):
-    user = User.objects.get(username='anp8')
+    user = User.objects.get(username='anders')
     r = Track.objects.filter(
         userrating__user=user,
         userrating__rating=rating)
@@ -248,7 +248,7 @@ def rating_m3u(request, rating):
 
 
 def rating_play_m3u(request, rating):
-    user = User.objects.get(username='anp8')
+    user = User.objects.get(username='anders')
     tracks = Track.objects.filter(
         userrating__user=user,
         userrating__rating=rating).order_by(
@@ -261,7 +261,7 @@ http://music.thraxil.org/track/%d/played/""" % (
 
 
 def played_track(request, id):
-    user = User.objects.get(username='anp8')
+    user = User.objects.get(username='anders')
     track = get_object_or_404(Track, id=id)
     track.played(user)
     return HttpResponseRedirect(track.play(local=True))
