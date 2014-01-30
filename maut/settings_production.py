@@ -13,6 +13,12 @@ TEMPLATE_DEBUG = DEBUG
 STATIC_ROOT = "/var/www/maut/maut/media/"
 STATICFILES_DIRS = ()
 
+if 'migrate' not in sys.argv:
+    INSTALLED_APPS = INSTALLED_APPS + [
+        'raven.contrib.django.raven_compat',
+    ]
+
+
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 try:
