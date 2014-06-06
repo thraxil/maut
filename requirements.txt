@@ -34,3 +34,4 @@ Fabric==1.6.1
 django-annoying==0.7.6
 raven==4.0.3
 django-markwhat==1.0
+requests==0.13.3

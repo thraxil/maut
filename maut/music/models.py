@@ -425,6 +425,12 @@ class Track(models.Model):
         url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
 
+    def extension(self):
+        if self.filetype == 2:
+            return "ogg"
+        else:
+            return "mp3"
+
     def filename(self):
         # once it's in tahoe, we don't know the original
         # filename
@@ -468,6 +474,14 @@ class Track(models.Model):
 
     def is_mp3(self):
         return self.filetype == 1
+
+    def local_download(self):
+        url = self.url.encode('utf-8')
+        fname = "file.mp3"
+        if self.filetype != 1:
+            fname = "file.ogg"
+        return (LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url)
+                + "/@@named=" + fname)
 
     def play(self, local=False):
         url = self.url.encode('utf-8')
