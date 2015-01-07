@@ -7,9 +7,9 @@ import os
 
 
 username = 'anders'
-TARGET = "/mnt/sansa/music/"
+TARGET = "/mnt/sd/"
 TAHOE_BASE = "http://localhost:3456/"
-LIMIT = 200
+LIMIT = 1000
 
 
 def dir_safe(s):
@@ -40,6 +40,7 @@ class Command(BaseCommand):
         idxes = range(count)
         random.shuffle(idxes)
         playlist = open(os.path.join(TARGET, "all.m3u"), "a")
+        c = 1
         for i in idxes[:LIMIT]:
             t = tracks[i]
             d = track_dir(t)
@@ -50,10 +51,11 @@ class Command(BaseCommand):
                 os.makedirs(os.path.join(TARGET, d))
             except Exception:
                 pass
-            print fullpath
+            print "%03d %s" % (c, fullpath)
             fh = open(fullpath, "w")
             r = requests.get(tahoe_url)
             fh.write(r.content)
             fh.close()
             playlist.write("%s/%s\n" % (d, f))
+            c += 1
         playlist.close()
