@@ -391,7 +391,7 @@ class Track(models.Model):
     samplerate = models.IntegerField()
     filesize = models.IntegerField()
     filetype = models.IntegerField()
-    sampler = models.BooleanField()
+    sampler = models.BooleanField(default=False)
     bpm = models.FloatField()
 
     class Meta:

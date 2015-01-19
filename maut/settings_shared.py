@@ -100,7 +100,6 @@ INSTALLED_APPS = [
     'typogrify',
     'maut.music',
     'django_nose',
-    'south',
     'django_statsd',
     'gunicorn',
     'django_markwhat',

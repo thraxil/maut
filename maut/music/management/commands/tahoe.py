@@ -1,7 +1,7 @@
 import os
 import os.path
 from restclient import GET, POST
-from simplejson import loads
+from json import loads
 from pprint import pprint
 import urllib2
 from poster.encode import multipart_encode
