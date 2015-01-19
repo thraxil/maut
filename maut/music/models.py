@@ -393,6 +393,7 @@ class Track(models.Model):
     filetype = models.IntegerField()
     sampler = models.BooleanField(default=False)
     bpm = models.FloatField()
+    sha1 = models.TextField(blank=True, default="")
 
     class Meta:
         db_table = u'tags'
