@@ -95,7 +95,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tagging',
-    'smartif',
     'template_utils',
     'typogrify',
     'maut.music',
