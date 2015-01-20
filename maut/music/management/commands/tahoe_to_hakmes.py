@@ -1,10 +1,8 @@
-from maut.music.models import Track, User
+from maut.music.models import Track
 from django.conf import settings
 from django.core.management.base import BaseCommand
-import random
 import requests
 import re
-import os
 
 TAHOE_BASE = settings.TAHOE_BASE
 HAKMES_BASE = settings.HAKMES_BASE
@@ -46,7 +44,8 @@ class Command(BaseCommand):
 
                 print "...downloaded..."
 
-                files = {'file': (fullpath, open(fullpath, 'rb'), t.mimetype())}
+                files = {'file': (fullpath, open(fullpath, 'rb'),
+                                  t.mimetype())}
                 r = requests.post(HAKMES_BASE, files=files)
                 t.sha1 = r.json()['key']
                 t.save()
@@ -54,5 +53,3 @@ class Command(BaseCommand):
             except Exception, e:
                 print "!!!exception!!!"
                 print str(e)
-                
-
