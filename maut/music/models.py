@@ -440,6 +440,12 @@ class Track(models.Model):
         else:
             return "file.mp3"
 
+    def mimetype(self):
+        if self.filetype == 2:
+            return "audio/vorbis"
+        else:
+            return "audio/mpeg"
+
     def created(self):
         return datetime.datetime.fromtimestamp(self.createdate)
 

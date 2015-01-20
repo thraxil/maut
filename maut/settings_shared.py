@@ -117,6 +117,9 @@ STATSD_PREFIX = 'maut'
 STATSD_HOST = '127.0.0.1'
 STATSD_PORT = 8125
 
+HAKMES_BASE = "http://localhost:9300/"
+TAHOE_BASE = "http://localhost:3456/"
+
 ALLOWED_HOSTS = ['localhost', '.thraxil.org']
 LOGGING = {
     'version': 1,
