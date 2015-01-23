@@ -136,7 +136,7 @@ def album_m3u(request, id):
     album = get_object_or_404(Album, id=id)
     output = "#EXTM3U\r\n" + "\r\n".join(
         [track.extended_m3u() for track in album.track_set.all()])
-    return HttpResponse(output, mimetype="audio/x-mpegurl")
+    return HttpResponse(output, content_type="audio/x-mpegurl")
 
 
 def album_play_m3u(request, id):
@@ -147,7 +147,7 @@ def album_play_m3u(request, id):
 http://music.thraxil.org/track/%d/played/""" % (
                 track.artist.name, track.title, track.id
             ) for track in album.track_set.all()])
-    return HttpResponse(output, mimetype="audio/x-mpegurl")
+    return HttpResponse(output, content_type="audio/x-mpegurl")
 
 
 @login_required
@@ -187,7 +187,7 @@ def random_playlist(request):
 http://music.thraxil.org/track/%d/played/""" % (
         track.artist.name, track.title, track.id
     ) for track in tracks])
-    return HttpResponse(output, mimetype="audio/x-mpegurl")
+    return HttpResponse(output, content_type="audio/x-mpegurl")
 
 
 @login_required
@@ -230,7 +230,7 @@ def rating_csv(request, rating):
                 t.title.encode('utf-8')
             ])
 
-    response = HttpResponse(s.getvalue(), mimetype="text/csv")
+    response = HttpResponse(s.getvalue(), content_type="text/csv")
     response["Content-Disposition"] = (
         "attachment; filename=rating%d.csv" % int(rating))
     return response
@@ -245,7 +245,7 @@ def rating_m3u(request, rating):
     output = "#EXTM3U\r\n" + "\r\n".join(
         [track.extended_m3u() for track in tracks]
     )
-    return HttpResponse(output, mimetype="audio/x-mpegurl")
+    return HttpResponse(output, content_type="audio/x-mpegurl")
 
 
 def rating_play_m3u(request, rating):
@@ -258,7 +258,7 @@ def rating_play_m3u(request, rating):
 http://music.thraxil.org/track/%d/played/""" % (
         track.artist.name, track.title, track.id
     ) for track in tracks])
-    return HttpResponse(output, mimetype="audio/x-mpegurl")
+    return HttpResponse(output, content_type="audio/x-mpegurl")
 
 
 def played_track(request, id):
