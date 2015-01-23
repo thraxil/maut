@@ -426,6 +426,10 @@ class Track(models.Model):
         url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
 
+    def hakmes_url(self):
+        return (settings.HAKMES_BASE + "file/" + self.sha1
+                + "/file." + self.extension())
+
     def extension(self):
         if self.filetype == 2:
             return "ogg"
@@ -491,16 +495,7 @@ class Track(models.Model):
                 + "/@@named=" + fname)
 
     def play(self, local=False):
-        url = self.url.encode('utf-8')
-        fname = "file.mp3"
-        if self.filetype != 1:
-            fname = "file.ogg"
-        if local:
-            return (LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url)
-                    + "/@@named=" + fname)
-        else:
-            return (TAHOE_BASE + "file/" + urllib2.quote(url)
-                    + "/@@named=" + fname)
+        return self.hakmes_url()
 
     def extended_m3u(self):
         return """#EXTINF:123,%s - %s
