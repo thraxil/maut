@@ -11,6 +11,7 @@ import thread
 from django.contrib.auth.models import User
 from restclient import GET, POST
 from hashlib import md5
+from django.conf import settings
 
 
 def md5hash(string):
