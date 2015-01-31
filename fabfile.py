@@ -7,7 +7,7 @@ nginx_hosts = ['lolrus.thraxil.org']
 
 
 def restart_gunicorn():
-    sudo("restart maut")
+    sudo("restart maut", shell=False)
 
 def prepare_deploy():
     local("./manage.py test")
