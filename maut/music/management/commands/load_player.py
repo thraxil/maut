@@ -8,7 +8,6 @@ import os
 
 username = 'anders'
 TARGET = "/mnt/sd/"
-TAHOE_BASE = "http://localhost:3456/"
 LIMIT = 1000
 
 
@@ -45,7 +44,7 @@ class Command(BaseCommand):
             t = tracks[i]
             d = track_dir(t)
             f = track_filename(t)
-            tahoe_url = t.local_download()
+            url = t.local_download()
             fullpath = os.path.join(TARGET, d, f)
             try:
                 os.makedirs(os.path.join(TARGET, d))
@@ -53,7 +52,7 @@ class Command(BaseCommand):
                 pass
             print "%03d %s" % (c, fullpath)
             fh = open(fullpath, "w")
-            r = requests.get(tahoe_url)
+            r = requests.get(url)
             fh.write(r.content)
             fh.close()
             playlist.write("%s/%s\n" % (d, f))

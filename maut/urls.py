@@ -32,7 +32,6 @@ urlpatterns = patterns(
     (r'^track/(?P<id>\d+)/playlist/$', 'maut.music.views.track_playlist'),
     (r'^track/(?P<id>\d+)/add_to_playlist/$',
      'maut.music.views.add_track_to_playlist'),
-    (r'^add_from_tahoe/$', 'maut.music.views.add_from_tahoe'),
     (r'^randomplaylist/$', 'maut.music.views.random_playlist'),
     (r'^rating/(?P<rating>\d+)/$', 'maut.music.views.rating'),
     (r'^rating/(?P<rating>\d+)/csv/$', 'maut.music.views.rating_csv'),

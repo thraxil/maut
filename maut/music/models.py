@@ -17,9 +17,6 @@ from django.conf import settings
 def md5hash(string):
     return md5(string).hexdigest()
 
-TAHOE_BASE = "http://tahoe.ccnmtl.columbia.edu/"
-LOCAL_TAHOE_BASE = "http://localhost:3456/"
-
 
 def last_played_track(user):
     return Track.objects.filter(
@@ -56,56 +53,6 @@ def filetype_from_extension(filename):
     if filename.lower().endswith('ogg'):
         return 2
     return 1
-
-
-def add_track_from_tahoe(cap, filename="", artist="Unknown",
-                         album="Unknown", title="Unknown",
-                         modifydate=None,  year='0000',
-                         track='0', genre='Unknown', length="0",
-                         samplerate="0", bitrate="0", filesize="0"):
-    if not filename.endswith(".mp3") or filename.endswith(".ogg"):
-        return
-    r = Track.objects.filter(url=cap)
-    if r.count() > 0:
-        # already in there
-        return
-
-    artist = get_or_create_artist(artist)
-    album = get_or_create_album(album, artist)
-    year = get_or_create_year(year)
-    if '/' in track:
-        track = track.split('/')[0]
-        track = int(track)
-    genre = get_or_create_genre(genre)
-    modifydate = int(time.mktime(datetime.datetime.now().timetuple()))
-    createdate = modifydate
-    composer = Composer.objects.get(name='')
-    comment = ""
-    filetype = filetype_from_extension(filename)
-    sampler = False
-    bpm = 0.0
-    discnumber = 0
-    t = Track.objects.create(
-        url=cap,
-        createdate=int(createdate),
-        modifydate=int(modifydate),
-        album=album,
-        artist=artist,
-        composer=composer,
-        genre=genre,
-        title=title,
-        year=year,
-        comment=comment,
-        track=int(track),
-        discnumber=int(discnumber),
-        bitrate=int(bitrate),
-        length=int(length),
-        samplerate=int(samplerate),
-        filesize=int(filesize),
-        filetype=int(filetype),
-        sampler=sampler,
-        bpm=bpm)
-    init_track_for_all_users(t)
 
 
 def init_track_for_all_users(track):
@@ -424,7 +371,7 @@ class Track(models.Model):
         fname = "file.mp3"
         if self.filetype != 1:
             fname = "file.ogg"
-        url = TAHOE_BASE + "file/" + urllib2.quote(url) + "/@@named=" + fname
+        url = "file/" + urllib2.quote(url) + "/@@named=" + fname
         return url
 
     def hakmes_url(self):
@@ -438,7 +385,6 @@ class Track(models.Model):
             return "mp3"
 
     def filename(self):
-        # once it's in tahoe, we don't know the original
         # filename
         if self.filetype == 2:
             return "file.ogg"
@@ -492,7 +438,7 @@ class Track(models.Model):
         fname = "file.mp3"
         if self.filetype != 1:
             fname = "file.ogg"
-        return (LOCAL_TAHOE_BASE + "file/" + urllib2.quote(url)
+        return ("file/" + urllib2.quote(url)
                 + "/@@named=" + fname)
 
     def play(self, local=False):
@@ -562,9 +508,3 @@ def random_tracks(user, num=50):
     tracks = Track.objects.filter(userrating__user=user,
                                   userrating__rating__gte=8).order_by('?')
     return tracks[:num]
-
-
-def extract_tahoe_cap(url):
-    parts = url.split("/")
-    cap = parts[4].replace("%3A", ":")
-    return cap

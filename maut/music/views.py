@@ -6,7 +6,6 @@ from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 from models import Artist, Album, Track, Playlist, PlaylistTrack
 from models import User, Genre, Year
-from models import add_track_from_tahoe
 from models import last_tracks, newest_tracks, full_search
 from models import random_tracks
 from django.core.paginator import Paginator
@@ -156,24 +155,6 @@ def rate_track(request, id):
     rating = request.POST.get('rating', '0')
     track.rate(request.user, rating)
     return HttpResponse("ok")
-
-
-def add_from_tahoe(request):
-    if request.method != "POST":
-        return HttpResponse(status=200, content="")
-    add_track_from_tahoe(cap=request.POST['cap'],
-                         artist=request.POST['artist'],
-                         album=request.POST['album'],
-                         title=request.POST['title'],
-                         filename=request.POST.get("filename", ""),
-                         year=request.POST.get('year', '0000'),
-                         track=request.POST.get('track', '0'),
-                         genre=request.POST.get('genre', 'Unknown'),
-                         length=request.POST.get("length", "0"),
-                         samplerate=request.POST.get("samplerate", "0"),
-                         bitrate=request.POST.get("bitrate", "0"),
-                         filesize=request.POST.get("filesize", "0"))
-    return HttpResponse(status=200, content="ok")
 
 
 def random_playlist(request):
