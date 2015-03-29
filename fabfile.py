@@ -2,7 +2,7 @@ from fabric.api import run, sudo, local, cd, env
 
 env.hosts = ['orlando.thraxil.org']
 env.user = 'anders'
-nginx_hosts = ['lolrus.thraxil.org']
+nginx_hosts = ['north.thraxil.org']
 
 
 
