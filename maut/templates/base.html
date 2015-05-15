@@ -1,18 +1,16 @@
+{% load compress %}
 <html>
 <head><title>maut: {% block title %}{% endblock %}</title>
 
-<style media="screen" type="text/css">
-@import "{{STATIC_URL}}css/site.css" ;
-</style>
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/rating/rating.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/site.css" />
+{% endcompress %}
+
+{% compress js %}
 <script type="text/javascript" src="{{STATIC_URL}}js/rating/jquery.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/rating/rating.js"></script>
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/rating/rating.css" />
-<script type="text/javascript">
-$(document).ready(function() {
-//        $('#rate1').rating('www.url.php', {maxvalue:5});
-//        $('#rate2').rating('www.url.php', {maxvalue:5, curvalue:3});
-});
-</script>
+{% endcompress %}
 
 {% block css %}{% endblock %}
 {% block js %}{% endblock %}
