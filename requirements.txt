@@ -6,7 +6,7 @@ Markdown==2.5.2
 smartypants==1.8.6
 mutagen==1.15
 poster==0.7.0
-psycopg2==2.5.4
+psycopg2==2.6
 coverage==4.0a1
 pep8==1.5.7
 pyflakes==0.8.1
@@ -23,6 +23,6 @@ requests==2.5.0
 django-tagging==0.3.1
 template_utils==0.4p2
 django-statsd-mozilla==0.3.14
-django-annoying==0.8.0
+django-annoying==0.8.1
 raven==5.1.1
 django-markwhat==1.3
