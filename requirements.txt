@@ -25,4 +25,4 @@ template_utils==0.4p2
 django-statsd-mozilla==0.3.14
 django-annoying==0.8.0
 raven==5.1.1
-django-markwhat==2014.9.20
+django-markwhat==1.3
