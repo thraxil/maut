@@ -22,7 +22,7 @@ if 'migrate' not in sys.argv:
         'raven.contrib.django.raven_compat',
     ]
 
-AWS_S3_CUSTOM_DOMAIN = "d12khfts9rqjej.cloudfront.net"
+AWS_S3_CUSTOM_DOMAIN = "dywqxaybrpkg1.cloudfront.net"
 AWS_IS_GZIPPED = True
 
 AWS_STORAGE_BUCKET_NAME = "thraxil-maut-static-prod"
