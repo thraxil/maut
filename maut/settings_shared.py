@@ -90,7 +90,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tagging',
     'template_utils',
-    'typogrify',
     'maut.music',
     'django_statsd',
     'gunicorn',
