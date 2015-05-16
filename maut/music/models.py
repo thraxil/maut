@@ -2,9 +2,6 @@ from django.db import models
 import datetime
 import time
 import urllib
-from mutagen.mp3 import MP3
-from mutagen.oggvorbis import OggVorbis
-from mutagen.flac import FLAC
 import urllib2
 import tagging
 import thread
@@ -107,16 +104,6 @@ def get_or_create_album(name, artist):
         # we need to make sure it's an album that's associated
         # with this artist
         return find_or_create_album_by_artist(r, name, artist)
-
-
-def get_id3_info_for_file(file):
-    if file.lower().endswith('mp3'):
-        audio = MP3(file)
-    elif file.lower().endswith('ogg'):
-        audio = OggVorbis(file)
-    elif file.lower().endswith('flac'):
-        audio = FLAC(file)
-    return audio
 
 
 class Genre(models.Model):
