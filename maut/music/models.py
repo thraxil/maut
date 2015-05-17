@@ -226,7 +226,7 @@ def get_setting(name):
 
 
 def lastfm_handshake():
-    password = open("/home/anders/.lastfm_password").read().strip()
+    password = open(settings.LASTFM_PASSWORD_FILE).read().strip()
     timestamp = int(time.time())
     auth_token = md5hash(md5hash(password) + str(timestamp))
     handshake_url = (
@@ -278,7 +278,7 @@ def delayed_scrobble(track, timestamp):
 
     # just re-handshake since it could've been long enough that the
     # session expired
-    password = open("/home/anders/.lastfm_password").read().strip()
+    password = open(settings.LASTFM_PASSWORD_FILE).read().strip()
     newtimestamp = int(time.time())
     auth_token = md5hash(md5hash(password) + str(newtimestamp))
     handshake_url = (

@@ -4,6 +4,7 @@ import os
 
 # required settings:
 SECRET_KEY = os.environ['SECRET_KEY']
+LASTFM_PASSWORD_FILE = os.environ['LASTFM_PASSWORD_FILE']
 
 # optional/defaulted settings
 DB_NAME = os.environ.get('DB_NAME', 'maut')
