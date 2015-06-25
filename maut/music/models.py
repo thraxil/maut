@@ -3,12 +3,12 @@ import datetime
 import time
 import urllib
 import urllib2
-import tagging
 import thread
 from django.contrib.auth.models import User
 from restclient import GET, POST
 from hashlib import md5
 from django.conf import settings
+from tagging.registry import register
 
 
 def md5hash(string):
@@ -189,14 +189,11 @@ class Artist(models.Model):
         return "/artist/%d/" % self.id
 
     def lastfm(self):
-        return ("http://last.fm/music/"
-                + urllib.quote_plus(self.name.encode('utf-8')))
+        return ("http://last.fm/music/" +
+                urllib.quote_plus(self.name.encode('utf-8')))
 
 
-try:
-    tagging.register(Artist)
-except tagging.AlreadyRegistered:
-    pass
+register(Artist)
 
 
 class Composer(models.Model):
@@ -362,8 +359,8 @@ class Track(models.Model):
         return url
 
     def hakmes_url(self):
-        return (settings.HAKMES_BASE + "file/" + self.sha1
-                + "/file." + self.extension())
+        return (settings.HAKMES_BASE + "file/" + self.sha1 +
+                "/file." + self.extension())
 
     def extension(self):
         if self.filetype == 2:
@@ -425,8 +422,8 @@ class Track(models.Model):
         fname = "file.mp3"
         if self.filetype != 1:
             fname = "file.ogg"
-        return ("file/" + urllib2.quote(url)
-                + "/@@named=" + fname)
+        return ("file/" + urllib2.quote(url) +
+                "/@@named=" + fname)
 
     def play(self, local=False):
         return self.hakmes_url()
@@ -435,10 +432,7 @@ class Track(models.Model):
         return """#EXTINF:123,%s - %s
 %s""" % (self.artist.name, self.title, self.play())
 
-try:
-    tagging.register(Track)
-except tagging.AlreadyRegistered:
-    pass
+register(Track)
 
 
 class UserRating(models.Model):
