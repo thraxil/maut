@@ -89,7 +89,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tagging',
-    'template_utils',
     'maut.music',
     'django_statsd',
     'gunicorn',
