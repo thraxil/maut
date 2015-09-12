@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'gunicorn',
     'django_markwhat',
     'compressor',
+    'smoketest',
 ]
 
 COMPRESS_URL = "/media/"

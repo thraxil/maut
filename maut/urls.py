@@ -14,6 +14,7 @@ urlpatterns = patterns(
      {'document_root': settings.MEDIA_ROOT}),
 
     (r'^$', views.IndexView.as_view()),
+    (r'smoketest/', include('smoketest.urls')),
     (r'^search/$', views.SearchView.as_view()),
     (r'^artist/(?P<pk>\d+)/$', views.ArtistView.as_view()),
     (r'^artist/(?P<id>\d+)/tag/$', 'maut.music.views.update_artist_tags'),
