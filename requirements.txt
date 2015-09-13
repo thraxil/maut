@@ -16,6 +16,7 @@ requests==2.7.0
 boto==2.38.0
 python-dateutil==2.4.2
 six==1.9.0
+sqlparse==0.1.15
 
 django-tagging==0.4
 django-statsd-mozilla==0.3.15
@@ -27,3 +28,9 @@ django-cacheds3storage==0.1.1
 django-appconf==1.0.1
 django_compressor==1.5
 django-smoketest==0.3.0
+django-debug-toolbar==1.3.2
+django-waffle==0.10.1
+django-jenkins==0.17.0
+django-extensions==1.5.5
+
+thraxilsettings==0.3.0
