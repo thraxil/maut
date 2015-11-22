@@ -4,3 +4,4 @@ ve
 distribute*.tar.gz
 *~
 .coverage
+wheelhouse
