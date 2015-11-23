@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -143,8 +144,8 @@ def album_play_m3u(request, id):
     output = "#EXTM3U\r\n" + "\r\n".join(
         [
             """#EXTINF:123,%s - %s
-http://music.thraxil.org/track/%d/played/""" % (
-                track.artist.name, track.title, track.id
+%s/track/%d/played/""" % (
+                track.artist.name, track.title, settings.BASE_URL, track.id
             ) for track in album.track_set.all()])
     return HttpResponse(output, content_type="audio/x-mpegurl")
 
@@ -165,8 +166,8 @@ def random_playlist(request):
         user = request.user
     tracks = list(random_tracks(user, 50))
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
-http://music.thraxil.org/track/%d/played/""" % (
-        track.artist.name, track.title, track.id
+%s/track/%d/played/""" % (
+        track.artist.name, track.title, settings.BASE_URL, track.id
     ) for track in tracks])
     return HttpResponse(output, content_type="audio/x-mpegurl")
 
@@ -236,8 +237,8 @@ def rating_play_m3u(request, rating):
         userrating__rating=rating).order_by(
             'artist__name', 'album__name', 'track', 'createdate')
     output = "#EXTM3U\r\n" + "\r\n".join(["""#EXTINF:123,%s - %s
-http://music.thraxil.org/track/%d/played/""" % (
-        track.artist.name, track.title, track.id
+%s/track/%d/played/""" % (
+        track.artist.name, track.title, settings.BASE_URL, track.id
     ) for track in tracks])
     return HttpResponse(output, content_type="audio/x-mpegurl")
 

@@ -18,3 +18,7 @@ locals().update(
 
 # required settings:
 LASTFM_PASSWORD_FILE = os.environ['LASTFM_PASSWORD_FILE']
+
+# optional
+BASE_URL = os.environ.get('BASE_URL', 'http://music.thraxil.org')
+HAKMES_BASE = os.environ.get('HAKMES_BASE', 'http://localhost:9300/')
