@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
@@ -13,7 +13,6 @@ from django.core.paginator import Paginator
 import tagging
 import csv
 from cStringIO import StringIO
-from annoying.decorators import render_to
 
 
 class LoggedInMixin(object):
@@ -48,19 +47,21 @@ class ArtistView(LoggedInMixin, DetailView):
 
 
 @login_required
-@render_to('music/album.html')
 def album(request, id):
     album = get_object_or_404(Album, id=id)
-    return dict(album=album,
-                user_playlists=Playlist.objects.filter(owner=request.user))
+    return render(
+        request, 'music/album.html',
+        dict(album=album,
+             user_playlists=Playlist.objects.filter(owner=request.user)))
 
 
 @login_required
-@render_to('music/track.html')
 def track(request, id):
     track = get_object_or_404(Track, id=id)
-    return dict(track=track,
-                user_playlists=Playlist.objects.filter(owner=request.user))
+    return render(
+        request, 'music/track.html',
+        dict(track=track,
+             user_playlists=Playlist.objects.filter(owner=request.user)))
 
 
 @login_required
@@ -173,7 +174,6 @@ def random_playlist(request):
 
 
 @login_required
-@render_to('music/rating.html')
 def rating(request, rating):
     paginator = Paginator(
         Track.objects.filter(
@@ -192,7 +192,7 @@ def rating(request, rating):
     except (paginator.EmptyPage, paginator.InvalidPage):
         tracks = paginator.page(paginator.num_pages)
 
-    return dict(tracks=tracks)
+    return render(request, 'music/rating.html', dict(tracks=tracks))
 
 
 def rating_csv(request, rating):
@@ -251,7 +251,6 @@ def played_track(request, id):
 
 
 @login_required
-@render_to('music/ratings.html')
 def ratings(request):
     data = []
     for r in range(11):
@@ -259,21 +258,19 @@ def ratings(request):
                                   userrating__rating=r).count()
         data.append(dict(rating=r, count=tc))
     data.reverse()
-    return dict(ratings=data)
+    return render(request, 'music/ratings.html', dict(ratings=data))
 
 
 @login_required
-@render_to('music/genres.html')
 def genres(request):
     data = []
     for g in Genre.objects.all().order_by('name'):
         tc = Track.objects.filter(genre=g).count()
         data.append(dict(genre=g, count=tc))
-    return dict(genres=data)
+    return render(request, 'music/genres.html', dict(genres=data))
 
 
 @login_required
-@render_to('music/genre.html')
 def genre(request, genre):
     g = get_object_or_404(Genre, id=genre)
     paginator = Paginator(
@@ -290,22 +287,20 @@ def genre(request, genre):
         tracks = paginator.page(page)
     except (paginator.EmptyPage,  paginator.InvalidPage):
         tracks = paginator.page(paginator.num_pages)
-    return dict(genre=g, tracks=tracks)
+    return render(request, 'music/genre.html', dict(genre=g, tracks=tracks))
 
 
 @login_required
-@render_to('music/years.html')
 def years(request):
     data = []
     for y in Year.objects.all().order_by('name'):
         tc = Track.objects.filter(year=y).count()
         data.append(dict(year=y, count=tc))
     data.reverse()
-    return dict(years=data)
+    return render(request, 'music/years.html', dict(years=data))
 
 
 @login_required
-@render_to('music/year.html')
 def year(request, year):
     y = get_object_or_404(Year, id=year)
     paginator = Paginator(
@@ -322,11 +317,10 @@ def year(request, year):
         tracks = paginator.page(page)
     except (paginator.EmptyPage, paginator.InvalidPage):
         tracks = paginator.page(paginator.num_pages)
-    return dict(year=y, tracks=tracks)
+    return render(request, 'music/year.html', dict(year=y, tracks=tracks))
 
 
 @login_required
-@render_to('music/yeartop.html')
 def yeartop(request):
     paginator = Paginator(
         Track.objects.filter(
@@ -344,7 +338,7 @@ def yeartop(request):
         tracks = paginator.page(page)
     except (paginator.EmptyPage, paginator.InvalidPage):
         tracks = paginator.page(paginator.num_pages)
-    return dict(tracks=tracks)
+    return render(request, 'music/yeartop.html', dict(tracks=tracks))
 
 
 def build_ratings(get):
@@ -383,7 +377,6 @@ def get_allyears(years):
 
 
 @login_required
-@render_to('music/facet.html')
 def facet(request):
     # available facets:
     # year
@@ -413,7 +406,7 @@ def facet(request):
         dict(
             tracks=tracks,
             years=allyears))
-    return params
+    return render(request, 'music/facet.html', params)
 
 
 @login_required
@@ -465,13 +458,12 @@ def update_artist_tags(request, id):
 
 
 @login_required
-@render_to('music/tags.html')
 def tags(request):
-    return dict(tags=tagging.models.Tag.objects.all().order_by('name'))
+    return render(request, 'music/tags.html',
+                  dict(tags=tagging.models.Tag.objects.all().order_by('name')))
 
 
 @login_required
-@render_to('music/tag.html')
 def tag(request, tag):
     t = get_object_or_404(tagging.models.Tag, name=tag)
     paginator = Paginator(
@@ -490,8 +482,8 @@ def tag(request, tag):
     except (paginator.EmptyPage, paginator.InvalidPage):
         tracks = paginator.page(paginator.num_pages)
 
-    return dict(tag=t, tracks=tracks,
-                artists=t.items.get_by_model(Artist, [t]).order_by('name'))
+    return render(request, 'music/tag.html', dict(tag=t, tracks=tracks,
+                  artists=t.items.get_by_model(Artist, [t]).order_by('name')))
 
 
 class PlaylistIndexView(LoggedInMixin, TemplateView):
@@ -516,10 +508,9 @@ def create_playlist(request):
 
 
 @login_required
-@render_to('music/playlist.html')
 def playlist(request, id):
     playlist = get_object_or_404(Playlist, id=id)
-    return dict(playlist=playlist)
+    return render(request, 'music/playlist.html', dict(playlist=playlist))
 
 
 @login_required
