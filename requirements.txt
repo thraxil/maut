@@ -12,11 +12,11 @@ mccabe==0.4.0
 flake8==2.5.4
 statsd==3.2.1
 gunicorn==19.4.5
-requests==2.9.1
-boto==2.39.0
+requests==2.10.0
+boto==2.40.0
 python-dateutil==2.5.3
 six==1.10.0
-sqlparse==0.1.18
+sqlparse==0.1.19
 
 django-tagging==0.4.1
 django-statsd-mozilla==0.3.16
@@ -29,6 +29,6 @@ django-smoketest==1.0.0
 django-debug-toolbar==1.4
 django-waffle==0.11
 django-jenkins==0.18.1
-django-extensions==1.6.1
+django-extensions==1.6.3
 
 thraxilsettings==0.6.2
