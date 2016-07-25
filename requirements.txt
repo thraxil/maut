@@ -9,7 +9,7 @@ coverage==4.1
 pep8==1.7.0
 pyflakes==1.2.3
 mccabe==0.5.0
-flake8==2.6.2
+flake8==3.0.0
 statsd==3.2.1
 gunicorn==19.6.0
 requests==2.10.0
