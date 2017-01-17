@@ -5,7 +5,7 @@ feedparser==5.2.1
 Markdown==2.6.7
 poster==0.8.1
 psycopg2==2.6.2
-coverage==4.3.2
+coverage==4.3.3
 pep8==1.7.0
 pyflakes==1.5.0
 mccabe==0.5.3
